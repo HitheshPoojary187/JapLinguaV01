@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JapLingua-Learning</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes petalFall { 0% { transform: translateY(-10%) rotate(0deg); opacity: 0; } 10% {opacity:1;} 100% { transform: translateY(120%) rotate(360deg); opacity: 0; } }
+      @keyframes gentlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+      .sakura-petal { position:absolute; width:10px; height:14px; background:linear-gradient(135deg,#fecdd3,#fda4af); border-radius:60% 40% 60% 40%; box-shadow:0 1px 2px rgba(0,0,0,0.1); opacity:0; }
+      .loader-torii { animation: gentlePulse 1.6s ease-in-out infinite; }
+    </style>
   </head>
   <body>
     <div class="min-h-screen bg-gray-50 font-sans text-gray-800 antialiased p-4">
@@ -162,6 +168,21 @@
               <div class="mt-4 flex items-center justify-end">
                 <button id="translateBtn" class="px-5 py-2 rounded-lg font-semibold bg-indigo-600 text-white hover:bg-indigo-700">Translate</button>
               </div>
+              <!-- Japanese-themed loader -->
+              <div id="jpLoader" class="mt-4 relative hidden select-none">
+                <div class="flex items-center justify-center">
+                  <svg class="loader-torii w-20 h-20 text-rose-500" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+                    <rect x="6" y="10" width="52" height="6" rx="2"></rect>
+                    <rect x="10" y="18" width="44" height="4" rx="2"></rect>
+                    <rect x="14" y="22" width="6" height="32" rx="1"></rect>
+                    <rect x="44" y="22" width="6" height="32" rx="1"></rect>
+                    <rect x="20" y="30" width="4" height="24" rx="1"></rect>
+                    <rect x="40" y="30" width="4" height="24" rx="1"></rect>
+                  </svg>
+                </div>
+                <div id="jpLoaderPetals" class="pointer-events-none absolute inset-0 overflow-hidden" style="height:96px"></div>
+                <div class="text-center text-sm text-rose-500 mt-2">桜が舞っています… Translating</div>
+              </div>
               <div class="mt-3 grid grid-cols-1 gap-2">
                 <div class="flex items-start space-x-2 text-xs text-gray-600 bg-indigo-50/60 rounded-lg p-2 ring-1 ring-indigo-100">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-indigo-600 mt-0.5"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z"/></svg>
@@ -283,7 +304,32 @@
           }
           // Debug info display removed
 
+          var loader = document.getElementById('jpLoader');
+          var petalsHost = document.getElementById('jpLoaderPetals');
+          function showLoader(){
+            if (!loader) return;
+            loader.classList.remove('hidden');
+            if (petalsHost) {
+              petalsHost.innerHTML = '';
+              for (var i = 0; i < 18; i++) {
+                var p = document.createElement('div');
+                p.className = 'sakura-petal';
+                var left = Math.random() * 100;
+                var delay = Math.random() * 1.5;
+                var duration = 2.5 + Math.random() * 2.5;
+                var scale = 0.8 + Math.random() * 0.8;
+                p.style.left = left + '%';
+                p.style.top = (-10 - Math.random()*20) + 'px';
+                p.style.transform = 'scale(' + scale + ')';
+                p.style.animation = 'petalFall ' + duration + 's linear ' + delay + 's infinite';
+                petalsHost.appendChild(p);
+              }
+            }
+          }
+          function hideLoader(){ if (loader) loader.classList.add('hidden'); }
+
           try {
+            showLoader();
             var url = API_BASE + '/translate?text=' + encodeURIComponent(sendText) + '&inputType=' + encodeURIComponent(type);
             var res = await fetch(url);
             var data = await res.json();
@@ -310,6 +356,7 @@
           } catch(e){
             if (elOut){ elOut.classList.remove('hidden'); elOut.textContent = 'Failed to contact server. Is the server running?'; }
           }
+          finally { hideLoader(); }
         }
 
         if (elBtn) elBtn.addEventListener('click', doTranslate);
