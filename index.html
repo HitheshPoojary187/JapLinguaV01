@@ -246,7 +246,7 @@
     <script>
       (function(){
         // --- Translator logic (from workspace, adapted) ---
-        var API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') && location.port === '5000' ? '' : 'http://localhost:5000';
+        var API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:5000' : '';
         var _wanakanaLoading = null;
         function loadScript(src){
           return new Promise(function(resolve, reject){
@@ -284,7 +284,7 @@
           // Debug info display removed
 
           try {
-            var url = API_BASE + '/translate?text=' + sendText + '&inputType=' + encodeURIComponent(type);
+            var url = API_BASE + '/translate?text=' + encodeURIComponent(sendText) + '&inputType=' + encodeURIComponent(type);
             var res = await fetch(url);
             var data = await res.json();
             if (data && data.error){
