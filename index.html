@@ -284,7 +284,7 @@
           // Debug info display removed
 
           try {
-            var url = API_BASE + '/translate?text=' + encodeURIComponent(sendText) + '&inputType=' + encodeURIComponent(type);
+            var url = API_BASE + '/translate?text=' + sendText + '&inputType=' + encodeURIComponent(type);
             var res = await fetch(url);
             var data = await res.json();
             if (data && data.error){
