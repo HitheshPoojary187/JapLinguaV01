@@ -37,6 +37,11 @@ Expand your vocabulary! Explore a curated collection of up to **400 essential Ja
 ### 🎌 Facts  
 Uncover the unique and wonderful aspects of Japan! The facts section provides a collection of interesting and surprising facts to deepen your knowledge of the country.  
 
+### 🤖 Chatbot  
+Your personal Japanese guide! The chatbot is **trained on Japanese etiquette and culture**. It can:  
+- Answer your questions about **Japanese manners, traditions, and customs**.  
+- Assist with general queries related to the Japanese language and beyond.  
+
 ---
 
 ## 🛠️ Technologies Used  
