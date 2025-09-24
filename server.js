@@ -5,6 +5,7 @@ const axios = require("axios");
 const _interopDefault = (m) => (m && m.default) ? m.default : m;
 const Kuroshiro = _interopDefault(require("kuroshiro"));
 const KuromojiAnalyzer = _interopDefault(require("kuroshiro-analyzer-kuromoji"));
+const { phrases, words } = require("./japanese-phrases-data");
 
 const app = express();
 app.use(cors());
@@ -96,6 +97,42 @@ app.get("/translate", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Translation failed", details: err.message });
+  }
+});
+
+app.get("/phrases", (req, res) => {
+  try {
+    const response = {
+      phrases: phrases,
+      words: words,
+      total: {
+        phrases: phrases.length,
+        words: words.length,
+        combined: phrases.length + words.length
+      }
+    };
+    res.json(response);
+  } catch (err) {
+    console.error("Error serving phrases:", err);
+    res.status(500).json({ error: "Failed to load phrases data" });
+  }
+});
+
+app.get("/api/phrases", (req, res) => {
+  try {
+    const response = {
+      phrases: phrases,
+      words: words,
+      total: {
+        phrases: phrases.length,
+        words: words.length,
+        combined: phrases.length + words.length
+      }
+    };
+    res.json(response);
+  } catch (err) {
+    console.error("Error serving phrases:", err);
+    res.status(500).json({ error: "Failed to load phrases data" });
   }
 });
 

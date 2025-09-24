@@ -1,235 +1,840 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JapLingua-Learning</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      @keyframes petalFall { 0% { transform: translateY(-10%) rotate(0deg); opacity: 0; } 10% {opacity:1;} 100% { transform: translateY(120%) rotate(360deg); opacity: 0; } }
-      @keyframes gentlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
-      .sakura-petal { position:absolute; width:10px; height:14px; background:linear-gradient(135deg,#fecdd3,#fda4af); border-radius:60% 40% 60% 40%; box-shadow:0 1px 2px rgba(0,0,0,0.1); opacity:0; }
-      .loader-torii { animation: gentlePulse 1.6s ease-in-out infinite; }
-    </style>
-  </head>
-  <body>
-    <div class="min-h-screen bg-gray-50 font-sans text-gray-800 antialiased p-4">
-      <div class="container mx-auto max-w-4xl py-8">
-        <header class="text-center mb-12">
-          <h1 class="text-5xl font-extrabold text-indigo-600 mb-2">Japanese Learning Hub</h1>
-          <p class="text-lg text-gray-500">Your practice for Hiragana, Katakana, and translation.</p>
-          <div style="font-family: monospace; font-size: 2rem; font-weight: bold;" class="mt-2">
-            <span id="typewriterText"></span>
-            <span class="type-cursor"></span>
-          </div>
-          <style>
-            @keyframes blink { 0%, 50% { opacity: 1; } 50.1%, 100% { opacity: 0; } }
-            .type-cursor{ display:inline-block; width:0.1em; background-color:black; margin-left:2px; animation:blink 1s steps(1) infinite; }
-          </style>
-          <nav class="mt-8 flex justify-center space-x-3">
-            <button id="btnNavHome" aria-label="Home" title="Home" class="p-2.5 rounded-full transition-colors duration-300 bg-indigo-600 text-white shadow-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                <path d="M11.47 3.84a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 1-1.06 1.06l-.81-.81V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1.5 1.5 0 0 0-1.5-1.5h-1.5A1.5 1.5 0 0 0 9.75 16v5.25c0 .414-.336.75-.75.75H5.75A2 2 0 0 1 3.75 20v-7.22l-.81.81a.75.75 0 0 1-1.06-1.06l8.59-8.69z"/>
-              </svg>
-            </button>
-            <button id="btnNavFlashcards" class="px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">
-              Flashcards
-            </button>
-            <button id="btnNavTranslator" class="px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">
-              Translator
-            </button>
-          </nav>
-        </header>
 
-        <main class="min-h-[500px] flex items-center justify-center bg-gray-200 rounded-2xl shadow-inner p-6">
-          <div class="flex flex-col items-center w-full space-y-6">
-            <!-- Home / Landing Section -->
-            <section id="homeSection" class="w-full">
-              <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-pink-50 ring-1 ring-indigo-100 shadow-md">
-                <div class="grid md:grid-cols-2 gap-6 p-6">
-                  <div class="flex flex-col justify-center">
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-indigo-700">Discover 日本文化</h2>
-                    <p class="mt-3 text-gray-600 leading-relaxed">
-                      Welcome to Japanese Learning Hub — a cozy place to practice
-                      Hiragana, Katakana, and explore the rich world of Japan.
-                      Start with flashcards, try translations, and read about
-                      culture, traditions, and etiquette below.
-                    </p>
-                    <div class="mt-5 flex flex-wrap gap-2">
-                      <span class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">Punctuality</span>
-                      <span class="px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700">Loyalty</span>
-                      <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Harmony</span>
-                      <span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">Respect</span>
-                    </div>
-                  </div>
-                  <div class="grid grid-cols-2 gap-3">
-                    <img alt="Torii gate at sunset" class="h-36 w-full object-cover rounded-xl shadow" src="https://res.cloudinary.com/jnto/image/upload/w_600,h_600,c_fill,f_auto,fl_lossy,q_60/v1/media/filer_public/2c/21/2c21ab18-f213-4bfa-adb8-b37b1620f7da/shutterstock_302738093-1024x683_grbcxu"/>
-                    <img alt="Traditional tea set" class="h-36 w-full object-cover rounded-xl shadow" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrz4cb70WgaJhjudywvjirjuM7elPftnaod-xRTXMl37RyaoJWCAcQUzQv-4qMtNn8zqU&usqp=CAU"/>
-                    <img alt="Cherry blossoms in bloom" class="h-36 w-full object-cover rounded-xl shadow" src="https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4032x3024+0+0/resize/4032x3024!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Fe8%2F49%2F4568ec1344e4adaaeea7560e8ceb%2Fimg-8535.jpg"/>
-                    <img alt="City lights in Tokyo" class="h-36 w-full object-cover rounded-xl shadow" src="https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/13/d1/d9/04.jpg"/>
-                  </div>
-                </div>
-              </div>
-              <div class="mt-6 grid md:grid-cols-3 gap-4">
-                <div class="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-50">
-                  <h3 class="text-lg font-semibold text-indigo-700">Culture</h3>
-                  <p class="mt-2 text-sm text-gray-600">From anime and manga to tea ceremony, samurai, festivals, calligraphy, and sushi, Japan blends timeless tradition with modern creativity.</p>
-                </div>
-                <div class="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-50">
-                  <h3 class="text-lg font-semibold text-indigo-700">Traditions</h3>
-                  <p class="mt-2 text-sm text-gray-600">Seasonal festivals, shrine visits, hanami (flower viewing), tea gatherings, and New Year rituals celebrate nature and community.</p>
-                </div>
-                <div class="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-50">
-                  <h3 class="text-lg font-semibold text-indigo-700">Etiquette</h3>
-                  <p class="mt-2 text-sm text-gray-600">Bow politely, remove shoes indoors, queue neatly, offer gifts thoughtfully, and speak with respect: いただきます, ありがとうございます.</p>
-                </div>
-              </div>
-              <div class="mt-6 bg-white rounded-xl p-6 shadow ring-1 ring-indigo-50">
-                <h3 class="text-xl font-bold text-indigo-700">About this project</h3>
-                <p class="mt-2 text-gray-600">Konnichiwa, enthusiasts! ✨ This is my small effort made out of interest in Japanese, and I truly hope you like it. The app is here to help you learn kana through interactive flashcards and explore words with the translator. It’s meant to feel calm, welcoming, and enjoyable for anyone curious about Japanese.
-                </p>
-              </div>
-            </section>
-            <!-- Create Section -->
-            <div id="createSection" class="w-full max-w-sm bg-white rounded-xl shadow-lg p-6 hidden">
-              <div class="mb-3">
-                <h2 class="text-xl font-bold text-indigo-700">Kana Flashcards</h2>
-                <p class="text-sm text-gray-600 mt-1">Build a quick deck to practice Hiragana or Katakana. Flip to reveal the answer and track your progress.</p>
-              </div>
-              <div class="mb-4 grid grid-cols-1 gap-2">
-                <div class="flex items-start space-x-2 text-xs text-gray-600 bg-indigo-50/60 rounded-lg p-2 ring-1 ring-indigo-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-indigo-600 mt-0.5"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z"/></svg>
-                  <span>Tip: Click <span class="font-semibold">Create Flashcards</span>, choose a script, then practice.</span>
-                </div>
-                <div class="flex items-start space-x-2 text-xs text-gray-600 bg-emerald-50/60 rounded-lg p-2 ring-1 ring-emerald-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-emerald-600 mt-0.5"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm-1 15-4-4 1.41-1.41L11 13.17l5.59-5.58L18 9Z"/></svg>
-                  <span>Use <span class="font-semibold">Show Answer</span> to flip the card, then move to the next.</span>
-                </div>
-              </div>
-              <label for="numInput" class="block text-sm font-medium text-gray-600 mb-2">Number of flashcards</label>
-              <input id="numInput" type="number" min="1" class="w-full border-2 border-gray-300 rounded-lg p-2 mb-4" placeholder="e.g. 20" />
-              <button id="createBtn" class="w-full px-4 py-2 rounded-lg font-semibold transition-colors duration-300 bg-indigo-600 text-white hover:bg-indigo-700">Create Flashcards</button>
-            </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JapLingua-Learning</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    window.chtlConfig = {
+      chatbotId: "7958299315"
+    }
+  </script>
+  <style>
+    @keyframes petalFall {
+      0% {
+        transform: translateY(-10%) rotate(0deg);
+        opacity: 0;
+      }
 
-            <!-- Options Section (vertical buttons) -->
-            <div id="optionsPanel" class="w-full max-w-sm hidden">
-              <div class="flex flex-col space-y-3">
-                <button id="btnHiragana" class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Hiragana</button>
-                <button id="btnKatakana" class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Katakana</button>
-                <button id="btnCharToRomaji" class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Hiragana → Romaji</button>
-                <button id="btnRomajiToChar" class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Romaji → Katakana</button>
-              </div>
-            </div>
+      10% {
+        opacity: 1;
+      }
 
-            <!-- Card Area -->
-            <div id="cardArea" class="flex flex-col items-center justify-center space-y-8 h-full hidden">
-              <div class="relative">
-                <div class="w-80 h-96 [perspective:1000px]">
-                  <div id="flashcard" class="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d]">
-                    <div class="absolute inset-0 w-full h-full bg-white rounded-xl shadow-lg flex items-center justify-center [backface-visibility:hidden]">
-                      <span id="frontText" class="text-8xl font-bold text-gray-800 select-none">あ</span>
-                    </div>
-                    <div class="absolute inset-0 w-full h-full bg-indigo-500 rounded-xl shadow-lg flex items-center justify-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                      <span id="backText" class="text-5xl font-bold text-white select-none">a</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full justify-center">
-                <button id="flipBtn" class="px-6 py-3 bg-purple-500 text-white font-semibold rounded-full shadow-lg hover:bg-purple-600 transition duration-300 transform hover:scale-105">Show Answer</button>
-                <button id="nextBtn" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-full shadow-lg hover:bg-green-600 transition duration-300 transform hover:scale-105">Next Card</button>
-                <button id="resetBtn" class="px-6 py-3 bg-gray-600 text-white font-semibold rounded-full shadow-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105 hidden">Reset</button>
-              </div>
-              <div id="countText" class="text-sm text-gray-500 mt-4">Card 1 of 10</div>
-            </div>
+      100% {
+        transform: translateY(120%) rotate(360deg);
+        opacity: 0;
+      }
+    }
 
-            <!-- Session Complete -->
-            <div id="sessionComplete" class="flex flex-col items-center justify-center space-y-6 hidden">
-              <h2 class="text-4xl font-bold text-gray-800">Session Complete!</h2>
-              <p class="text-lg text-gray-600 text-center max-w-sm">You've gone through all the characters. Great job!</p>
-              <button id="restartBtn" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-full shadow-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105">Start New Session</button>
-            </div>
+    @keyframes gentlePulse {
 
-            <!-- Translator -->
-            <div id="translatorSection" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 hidden">
-              <div class="mb-3">
-                <h2 class="text-xl font-bold text-indigo-700">Smart Translator</h2>
-                <p class="text-sm text-gray-600 mt-1">Translate between Japanese, Romanji, and English. Romanji input is auto-converted to Hiragana for better results.</p>
-              </div>
-              <div class="mb-3 flex items-center space-x-3">
-                <label for="inputType" class="text-sm font-medium text-gray-600">Input Type</label>
-                <select id="inputType" class="border-2 border-gray-300 rounded-lg p-2 text-sm">
-                  <option value="japanese">Japanese</option>
-                  <option value="romanji">Romanji</option>
-                  <option value="english">English</option>
-                </select>
-              </div>
-              <textarea id="inputText" class="w-full h-32 p-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors" placeholder="Type Japanese text..."></textarea>
-              <div class="mt-4 flex items-center justify-end">
-                <button id="translateBtn" class="px-5 py-2 rounded-lg font-semibold bg-indigo-600 text-white hover:bg-indigo-700">Translate</button>
-              </div>
-              <!-- Japanese-themed loader -->
-              <div id="jpLoader" class="mt-4 relative hidden select-none">
-                <div class="flex items-center justify-center">
-                  <svg class="loader-torii w-20 h-20 text-rose-500" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
-                    <rect x="6" y="10" width="52" height="6" rx="2"></rect>
-                    <rect x="10" y="18" width="44" height="4" rx="2"></rect>
-                    <rect x="14" y="22" width="6" height="32" rx="1"></rect>
-                    <rect x="44" y="22" width="6" height="32" rx="1"></rect>
-                    <rect x="20" y="30" width="4" height="24" rx="1"></rect>
-                    <rect x="40" y="30" width="4" height="24" rx="1"></rect>
-                  </svg>
-                </div>
-                <div id="jpLoaderPetals" class="pointer-events-none absolute inset-0 overflow-hidden" style="height:96px"></div>
-                <div class="text-center text-sm text-rose-500 mt-2">桜が舞っています… Translating</div>
-              </div>
-              <div class="mt-3 grid grid-cols-1 gap-2">
-                <div class="flex items-start space-x-2 text-xs text-gray-600 bg-indigo-50/60 rounded-lg p-2 ring-1 ring-indigo-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-indigo-600 mt-0.5"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z"/></svg>
-                  <span>Press <span class="font-semibold">Enter</span> to translate quickly.</span>
-                </div>
-                <div class="flex items-start space-x-2 text-xs text-gray-600 bg-blue-50/60 rounded-lg p-2 ring-1 ring-blue-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-blue-600 mt-0.5"><path d="M3 5h18v2H3zm4 6h10v2H7zm-4 6h18v2H3z"/></svg>
-                  <span>Outputs include <span class="font-semibold">Romanji</span> and <span class="font-semibold">English</span> where applicable.</span>
-                </div>
-              </div>
-              <div id="outputText" class="mt-4 bg-blue-50 rounded-xl ring-1 ring-blue-200 p-6 min-h-[100px] text-blue-900 font-medium hidden"></div>
-            </div>
-            
-          </div>
-        </main>
+      0%,
+      100% {
+        transform: scale(1);
+      }
 
-        <footer class="mt-12 rounded-t-2xl">
-          <div class="flex flex-col items-center justify-center py-6 space-y-3 text-sm text-gray-600">
-            <p>
-              Developed with ❤️ by <span class="font-semibold text-gray-800">Hithesh N Poojary </span>
-            </p>
-            <div class="flex space-x-4">
-              <a href="https://github.com/HitheshPoojary187" target="_blank" rel="noopener noreferrer" class="flex items-center px-3 py-1.5 bg-white shadow-md rounded-full text-indigo-600 hover:text-white hover:bg-indigo-600 transition duration-300 ease-in-out">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
-                  <path d="M12 .5C5.648.5.5 5.647.5 12c0 5.086 3.292 9.396 7.868 10.918.575.106.787-.25.787-.556v-2.06c-3.2.695-3.87-1.538-3.87-1.538-.523-1.33-1.28-1.686-1.28-1.686-1.046-.715.08-.7.08-.7 1.155.082 1.763 1.186 1.763 1.186 1.029 1.762 2.699 1.253 3.357.958.104-.746.402-1.253.73-1.541-2.554-.291-5.238-1.277-5.238-5.683 0-1.256.45-2.283 1.186-3.088-.12-.29-.514-1.463.112-3.052 0 0 .966-.309 3.165 1.179a11.02 11.02 0 012.88-.387c.977.004 1.963.132 2.88.387 2.198-1.488 3.163-1.179 3.163-1.179.628 1.589.234 2.762.114 3.052.738.805 1.185 1.832 1.185 3.088 0 4.418-2.688 5.388-5.253 5.672.41.354.776 1.055.776 2.126v3.146c0 .31.21.668.793.554C20.713 21.39 24 17.08 24 12c0-6.353-5.148-11.5-12-11.5z" />
-                </svg>
-                GitHub
-              </a>
-            </div>
-          </div>
-        </footer>
+      50% {
+        transform: scale(1.06);
+      }
+    }
+
+    .sakura-petal {
+      position: absolute;
+      width: 10px;
+      height: 14px;
+      background: linear-gradient(135deg, #fecdd3, #fda4af);
+      border-radius: 60% 40% 60% 40%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+    }
+
+    .loader-torii {
+      animation: gentlePulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200px 0;
+      }
+
+      100% {
+        background-position: calc(200px + 100%) 0;
+      }
+    }
+
+    #loadingScreen {
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    #loadingScreen h1 {
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    #loadingScreen p {
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    #progressBar {
+      background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6, #ec4899);
+      background-size: 200px 100%;
+      animation: shimmer 2s infinite linear;
+    }
+
+    .sakura-petal {
+      animation: petalFall 4s linear infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading Screen -->
+  <div id="loadingScreen"
+    class="fixed inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center z-50">
+    <div class="text-center">
+      <!-- Animated Torii Gate -->
+      <div class="relative mb-8">
+        <svg class="w-24 h-24 mx-auto text-white animate-pulse" viewBox="0 0 64 64" fill="currentColor">
+          <rect x="6" y="10" width="52" height="6" rx="2"></rect>
+          <rect x="10" y="18" width="44" height="4" rx="2"></rect>
+          <rect x="14" y="22" width="6" height="32" rx="1"></rect>
+          <rect x="44" y="22" width="6" height="32" rx="1"></rect>
+          <rect x="20" y="30" width="4" height="24" rx="1"></rect>
+          <rect x="40" y="30" width="4" height="24" rx="1"></rect>
+        </svg>
+
+        <!-- Floating Sakura Petals -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+          <div class="sakura-petal" style="left: 10%; animation-delay: 0s;"></div>
+          <div class="sakura-petal" style="left: 20%; animation-delay: 0.5s;"></div>
+          <div class="sakura-petal" style="left: 30%; animation-delay: 1s;"></div>
+          <div class="sakura-petal" style="left: 40%; animation-delay: 1.5s;"></div>
+          <div class="sakura-petal" style="left: 50%; animation-delay: 2s;"></div>
+          <div class="sakura-petal" style="left: 60%; animation-delay: 0.3s;"></div>
+          <div class="sakura-petal" style="left: 70%; animation-delay: 0.8s;"></div>
+          <div class="sakura-petal" style="left: 80%; animation-delay: 1.3s;"></div>
+          <div class="sakura-petal" style="left: 90%; animation-delay: 1.8s;"></div>
+        </div>
+      </div>
+
+      <!-- App Title -->
+      <h1 class="text-4xl font-bold text-white mb-4">JapLingua</h1>
+      <p class="text-xl text-indigo-200 mb-8">Learning Hub</p>
+
+      <!-- Loading Animation -->
+      <div class="flex items-center justify-center space-x-2 mb-6">
+        <div class="w-3 h-3 bg-white rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+        <div class="w-3 h-3 bg-white rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+        <div class="w-3 h-3 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+      </div>
+
+      <!-- Loading Text -->
+      <p class="text-indigo-300 text-lg" id="loadingText">Initializing...</p>
+
+      <!-- Progress Bar -->
+      <div class="w-64 h-2 bg-indigo-800 rounded-full mx-auto mt-4 overflow-hidden">
+        <div id="progressBar"
+          class="h-full bg-gradient-to-r from-pink-400 to-indigo-400 rounded-full transition-all duration-300 ease-out"
+          style="width: 0%;"></div>
       </div>
     </div>
+  </div>
 
-    <script>
+  <div class="min-h-screen bg-gray-50 font-sans text-gray-800 antialiased p-4">
+    <div class="container mx-auto max-w-4xl py-8">
+      <header class="text-center mb-12">
+        <h1 class="text-5xl font-extrabold text-indigo-600 mb-2">Japanese Learning Hub</h1>
+        <p class="text-lg text-gray-500">Your practice for Hiragana, Katakana, and translation.</p>
+        <div style="font-family: monospace; font-size: 2rem; font-weight: bold;" class="mt-2">
+          <span id="typewriterText"></span>
+          <span class="type-cursor"></span>
+        </div>
+        <style>
+          @keyframes blink {
+
+            0%,
+            50% {
+              opacity: 1;
+            }
+
+            50.1%,
+            100% {
+              opacity: 0;
+            }
+          }
+
+          .type-cursor {
+            display: inline-block;
+            width: 0.1em;
+            background-color: black;
+            margin-left: 2px;
+            animation: blink 1s steps(1) infinite;
+          }
+        </style>
+        <nav class="mt-8 flex flex-wrap justify-center gap-2 sm:gap-3">
+          <button id="btnNavHome" aria-label="Home" title="Home"
+            class="p-2.5 rounded-full transition-colors duration-300 bg-indigo-600 text-white shadow-lg hover:bg-indigo-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+              <path
+                d="M11.47 3.84a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 1-1.06 1.06l-.81-.81V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1.5 1.5 0 0 0-1.5-1.5h-1.5A1.5 1.5 0 0 0 9.75 16v5.25c0 .414-.336.75-.75.75H5.75A2 2 0 0 1 3.75 20v-7.22l-.81.81a.75.75 0 0 1-1.06-1.06l8.59-8.69z" />
+            </svg>
+          </button>
+          <button id="btnNavFlashcards"
+            class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
+            Flashcards
+          </button>
+          <button id="btnNavTranslator"
+            class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
+            Translator
+          </button>
+          <button id="btnNavPronunciation"
+            class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
+            Pronunciation
+          </button>
+          <button id="btnNavPhrases"
+            class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
+            Phrases
+          </button>
+          <button id="btnNavFacts"
+            class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
+            Facts
+          </button>
+        </nav>
+      </header>
+
+      <main class="min-h-[500px] flex items-center justify-center bg-gray-200 rounded-2xl shadow-inner p-6">
+        <div class="flex flex-col items-center w-full space-y-6">
+          <!-- Home / Landing Section -->
+          <section id="homeSection" class="w-full">
+            <div
+              class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-pink-50 ring-1 ring-indigo-100 shadow-md">
+              <div class="grid md:grid-cols-2 gap-6 p-6">
+                <div class="flex flex-col justify-center">
+                  <h2 class="text-3xl md:text-4xl font-extrabold text-indigo-700">Discover 日本文化</h2>
+                  <p class="mt-3 text-gray-600 leading-relaxed">
+                    Welcome to Japanese Learning Hub — a cozy place to practice
+                    Hiragana, Katakana, and explore the rich world of Japan.
+                    Start with flashcards, try translations, and read about
+                    culture, traditions, and etiquette below.
+                  </p>
+                  <div class="mt-5 flex flex-wrap gap-2">
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">Punctuality</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700">Loyalty</span>
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Harmony</span>
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">Respect</span>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <img alt="Torii gate at sunset" class="h-36 w-full object-cover rounded-xl shadow"
+                    src="https://res.cloudinary.com/jnto/image/upload/w_600,h_600,c_fill,f_auto,fl_lossy,q_60/v1/media/filer_public/2c/21/2c21ab18-f213-4bfa-adb8-b37b1620f7da/shutterstock_302738093-1024x683_grbcxu" />
+                  <img alt="Traditional tea set" class="h-36 w-full object-cover rounded-xl shadow"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrz4cb70WgaJhjudywvjirjuM7elPftnaod-xRTXMl37RyaoJWCAcQUzQv-4qMtNn8zqU&usqp=CAU" />
+                  <img alt="Cherry blossoms in bloom" class="h-36 w-full object-cover rounded-xl shadow"
+                    src="https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4032x3024+0+0/resize/4032x3024!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Fe8%2F49%2F4568ec1344e4adaaeea7560e8ceb%2Fimg-8535.jpg" />
+                  <img alt="City lights in Tokyo" class="h-36 w-full object-cover rounded-xl shadow"
+                    src="https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/13/d1/d9/04.jpg" />
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 grid md:grid-cols-3 gap-4">
+              <div class="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-50">
+                <h3 class="text-lg font-semibold text-indigo-700">Culture</h3>
+                <p class="mt-2 text-sm text-gray-600">From anime and manga to tea ceremony, samurai, festivals,
+                  calligraphy, and sushi, Japan blends timeless tradition with modern creativity.</p>
+              </div>
+              <div class="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-50">
+                <h3 class="text-lg font-semibold text-indigo-700">Traditions</h3>
+                <p class="mt-2 text-sm text-gray-600">Seasonal festivals, shrine visits, hanami (flower viewing), tea
+                  gatherings, and New Year rituals celebrate nature and community.</p>
+              </div>
+              <div class="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-50">
+                <h3 class="text-lg font-semibold text-indigo-700">Etiquette</h3>
+                <p class="mt-2 text-sm text-gray-600">Bow politely, remove shoes indoors, queue neatly, offer gifts
+                  thoughtfully, and speak with respect: いただきます, ありがとうございます.</p>
+              </div>
+            </div>
+            <div class="mt-6 bg-white rounded-xl p-6 shadow ring-1 ring-indigo-50">
+              <h3 class="text-xl font-bold text-indigo-700">About this project</h3>
+              <p class="mt-2 text-gray-600">Konnichiwa, enthusiasts! ✨ This is my small effort made out of interest in
+                Japanese, and I truly hope you like it. The app is here to help you learn kana through interactive
+                flashcards and explore words with the translator. It’s meant to feel calm, welcoming, and enjoyable for
+                anyone curious about Japanese.
+              </p>
+            </div>
+          </section>
+          <!-- Create Section -->
+          <div id="createSection" class="w-full max-w-sm bg-white rounded-xl shadow-lg p-6 hidden">
+            <div class="mb-3">
+              <h2 class="text-xl font-bold text-indigo-700">Kana Flashcards</h2>
+              <p class="text-sm text-gray-600 mt-1">Build a quick deck to practice Hiragana or Katakana. Flip to reveal
+                the answer and track your progress.</p>
+            </div>
+            <div class="mb-4 grid grid-cols-1 gap-2">
+              <div
+                class="flex items-start space-x-2 text-xs text-gray-600 bg-indigo-50/60 rounded-lg p-2 ring-1 ring-indigo-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                  class="w-4 h-4 text-indigo-600 mt-0.5">
+                  <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z" />
+                </svg>
+                <span>Tip: Click <span class="font-semibold">Create Flashcards</span>, choose a script, then
+                  practice.</span>
+              </div>
+              <div
+                class="flex items-start space-x-2 text-xs text-gray-600 bg-emerald-50/60 rounded-lg p-2 ring-1 ring-emerald-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                  class="w-4 h-4 text-emerald-600 mt-0.5">
+                  <path
+                    d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm-1 15-4-4 1.41-1.41L11 13.17l5.59-5.58L18 9Z" />
+                </svg>
+                <span>Use <span class="font-semibold">Show Answer</span> to flip the card, then move to the next.</span>
+              </div>
+            </div>
+            <label for="numInput" class="block text-sm font-medium text-gray-600 mb-2">Number of flashcards</label>
+            <input id="numInput" type="number" min="1" class="w-full border-2 border-gray-300 rounded-lg p-2 mb-4"
+              placeholder="e.g. 20" />
+            <button id="createBtn"
+              class="w-full px-4 py-2 rounded-lg font-semibold transition-colors duration-300 bg-indigo-600 text-white hover:bg-indigo-700">Create
+              Flashcards</button>
+          </div>
+
+          <!-- Options Section (vertical buttons) -->
+          <div id="optionsPanel" class="w-full max-w-sm hidden">
+            <div class="flex flex-col space-y-3">
+              <button id="btnHiragana"
+                class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Hiragana</button>
+              <button id="btnKatakana"
+                class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Katakana</button>
+              <button id="btnCharToRomaji"
+                class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Hiragana
+                → Romaji</button>
+              <button id="btnRomajiToChar"
+                class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Romaji
+                → Katakana</button>
+            </div>
+          </div>
+
+          <!-- Card Area -->
+          <div id="cardArea" class="flex flex-col items-center justify-center space-y-8 h-full hidden">
+            <div class="relative">
+              <div class="w-80 h-96 [perspective:1000px]">
+                <div id="flashcard"
+                  class="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d]">
+                  <div
+                    class="absolute inset-0 w-full h-full bg-white rounded-xl shadow-lg flex items-center justify-center [backface-visibility:hidden]">
+                    <span id="frontText" class="text-8xl font-bold text-gray-800 select-none">あ</span>
+                  </div>
+                  <div
+                    class="absolute inset-0 w-full h-full bg-indigo-500 rounded-xl shadow-lg flex items-center justify-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                    <span id="backText" class="text-5xl font-bold text-white select-none">a</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full justify-center">
+              <button id="flipBtn"
+                class="px-6 py-3 bg-purple-500 text-white font-semibold rounded-full shadow-lg hover:bg-purple-600 transition duration-300 transform hover:scale-105">Show
+                Answer</button>
+              <button id="nextBtn"
+                class="px-6 py-3 bg-green-500 text-white font-semibold rounded-full shadow-lg hover:bg-green-600 transition duration-300 transform hover:scale-105">Next
+                Card</button>
+              <button id="resetBtn"
+                class="px-6 py-3 bg-gray-600 text-white font-semibold rounded-full shadow-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105 hidden">Reset</button>
+            </div>
+            <div id="countText" class="text-sm text-gray-500 mt-4">Card 1 of 10</div>
+          </div>
+
+          <!-- Session Complete -->
+          <div id="sessionComplete" class="flex flex-col items-center justify-center space-y-6 hidden">
+            <h2 class="text-4xl font-bold text-gray-800">Session Complete!</h2>
+            <p class="text-lg text-gray-600 text-center max-w-sm">You've gone through all the characters. Great job!</p>
+            <button id="restartBtn"
+              class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-full shadow-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105">Start
+              New Session</button>
+          </div>
+
+          <!-- Translator -->
+          <div id="translatorSection" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 hidden">
+            <div class="mb-3">
+              <h2 class="text-xl font-bold text-indigo-700">Smart Translator</h2>
+              <p class="text-sm text-gray-600 mt-1">Translate between Japanese, Romanji, and English. Romanji input is
+                auto-converted to Hiragana for better results.</p>
+            </div>
+            <div class="mb-3 flex items-center space-x-3">
+              <label for="inputType" class="text-sm font-medium text-gray-600">Input Type</label>
+              <select id="inputType" class="border-2 border-gray-300 rounded-lg p-2 text-sm">
+                <option value="japanese">Japanese</option>
+                <option value="romanji">Romanji</option>
+                <option value="english">English</option>
+              </select>
+            </div>
+            <textarea id="inputText"
+              class="w-full h-32 p-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors"
+              placeholder="Type Japanese text..."></textarea>
+            <div class="mt-4 flex items-center justify-end">
+              <button id="translateBtn"
+                class="px-5 py-2 rounded-lg font-semibold bg-indigo-600 text-white hover:bg-indigo-700">Translate</button>
+            </div>
+            <div class="mt-3 grid grid-cols-1 gap-2">
+              <div
+                class="flex items-start space-x-2 text-xs text-gray-600 bg-indigo-50/60 rounded-lg p-2 ring-1 ring-indigo-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                  class="w-4 h-4 text-indigo-600 mt-0.5">
+                  <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z" />
+                </svg>
+                <span>Press <span class="font-semibold">Enter</span> to translate quickly.</span>
+              </div>
+              <div
+                class="flex items-start space-x-2 text-xs text-gray-600 bg-blue-50/60 rounded-lg p-2 ring-1 ring-blue-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                  class="w-4 h-4 text-blue-600 mt-0.5">
+                  <path d="M3 5h18v2H3zm4 6h10v2H7zm-4 6h18v2H3z" />
+                </svg>
+                <span>Outputs include <span class="font-semibold">Romanji</span> and <span
+                    class="font-semibold">English</span> where applicable.</span>
+              </div>
+            </div>
+            <div id="outputText"
+              class="mt-4 bg-blue-50 rounded-xl ring-1 ring-blue-200 p-6 min-h-[100px] text-blue-900 font-medium hidden relative overflow-hidden">
+            </div>
+          </div>
+
+          <!-- Pronunciation Section -->
+          <div id="pronunciationSection" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 hidden">
+            <div class="mb-3">
+              <h2 class="text-xl font-bold text-indigo-700">Pronunciation Practice</h2>
+              <p class="text-sm text-gray-600 mt-1">Type Romanji text and hear the Japanese pronunciation. Perfect for
+                learning proper pronunciation.</p>
+            </div>
+            <div class="mb-4 grid grid-cols-1 gap-2">
+              <div
+                class="flex items-start space-x-2 text-xs text-gray-600 bg-indigo-50/60 rounded-lg p-2 ring-1 ring-indigo-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                  class="w-4 h-4 text-indigo-600 mt-0.5">
+                  <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z" />
+                </svg>
+                <span>Type Romanji like <span class="font-semibold">"konnichiwa"</span> and click <span
+                    class="font-semibold">Speak</span> to hear it.</span>
+              </div>
+              <div
+                class="flex items-start space-x-2 text-xs text-gray-600 bg-emerald-50/60 rounded-lg p-2 ring-1 ring-emerald-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                  class="w-4 h-4 text-emerald-600 mt-0.5">
+                  <path
+                    d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm6 16H8a1 1 0 0 1-1-1V9h10v12a1 1 0 0 1-1 1z" />
+                  <circle cx="12" cy="15" r="2" />
+                </svg>
+                <span>The text is automatically converted to <span class="font-semibold">Hiragana</span> for accurate
+                  pronunciation.</span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <label for="romanjiInput" class="block text-sm font-medium text-gray-600 mb-2">Romanji Text</label>
+                <input type="text" id="romanjiInput"
+                  class="w-full p-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors"
+                  placeholder="e.g. konnichiwa, arigatou, sayonara" />
+              </div>
+              <div class="flex items-center justify-between">
+                <button id="speakBtn"
+                  class="px-6 py-3 bg-purple-500 text-white font-semibold rounded-full shadow-lg hover:bg-purple-600 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                    <path
+                      d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.318 1.5v6c0 .836 1.177 1.5 2.318 1.5H6.44l4.5 4.5c.944.945 2.56.276 2.56-1.06V4.06zM18.584 5.106a.75.75 0 011.06 0 11.5 11.5 0 010 16.268.75.75 0 11-1.06-1.06 10 10 0 000-14.147.75.75 0 010-1.061z" />
+                    <path
+                      d="M15.932 7.757a.75.75 0 011.061 0 6 6 0 010 8.486.75.75 0 01-1.06-1.061 4.5 4.5 0 000-6.364.75.75 0 010-1.06z" />
+                  </svg>
+                  <span>Speak</span>
+                </button>
+                <div id="pronunciationStatus" class="text-sm text-gray-500"></div>
+              </div>
+              <div id="japaneseOutput"
+                class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl ring-1 ring-indigo-200 p-6 min-h-[80px] hidden">
+                <div class="text-center">
+                  <p class="text-sm text-gray-600 mb-2">Japanese:</p>
+                  <p id="japaneseText" class="text-3xl font-bold text-indigo-700"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phrases Section -->
+          <div id="phrasesSection" class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6 hidden">
+            <div class="mb-6">
+              <h2 class="text-2xl font-bold text-indigo-700">Japanese Phrases & Words</h2>
+              <p class="text-sm text-gray-600 mt-1">Explore essential Japanese phrases and vocabulary with romanji and
+                English translations.</p>
+            </div>
+
+            <div class="mb-6 flex flex-wrap gap-2">
+              <button id="showAllBtn"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-medium hover:bg-indigo-700 transition-colors">
+                All
+              </button>
+              <button id="showPhrasesBtn"
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors">
+                Phrases
+              </button>
+              <button id="showWordsBtn"
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors">
+                Words
+              </button>
+            </div>
+
+            <div class="mb-4">
+              <input type="text" id="searchInput" placeholder="Search phrases or words..."
+                class="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors">
+            </div>
+
+            <div id="phrasesContainer" class="space-y-3 max-h-96 overflow-y-auto">
+              <div class="text-center py-8 text-gray-500">
+                <div
+                  class="animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto mb-2">
+                </div>
+                Loading phrases...
+              </div>
+            </div>
+
+            <div id="phrasesStats" class="mt-4 text-sm text-gray-500 text-center hidden">
+              Showing <span id="currentCount">0</span> of <span id="totalCount">0</span> items
+            </div>
+          </div>
+
+          <!-- Facts Section -->
+          <div id="factsSection" class="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 hidden">
+            <div class="mb-8 text-center">
+              <h2 class="text-3xl font-bold text-indigo-700 mb-2">Fascinating Japan Facts</h2>
+              <p class="text-lg text-gray-600">Discover the amazing culture, traditions, and unique aspects of Japan</p>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="mb-8 flex flex-wrap justify-center gap-3">
+              <button id="allFactsBtn"
+                class="px-6 py-2 bg-indigo-600 text-white rounded-full font-medium hover:bg-indigo-700 transition-colors">
+                All Facts
+              </button>
+              <button id="geographyBtn"
+                class="px-6 py-2 bg-gray-200 text-gray-700 rounded-full font-medium hover:bg-gray-300 transition-colors">
+                Geography & Nature
+              </button>
+              <button id="dailyLifeBtn"
+                class="px-6 py-2 bg-gray-200 text-gray-700 rounded-full font-medium hover:bg-gray-300 transition-colors">
+                Daily Life & Tech
+              </button>
+              <button id="cultureBtn"
+                class="px-6 py-2 bg-gray-200 text-gray-700 rounded-full font-medium hover:bg-gray-300 transition-colors">
+                Culture & Customs
+              </button>
+              <button id="traditionsBtn"
+                class="px-6 py-2 bg-gray-200 text-gray-700 rounded-full font-medium hover:bg-gray-300 transition-colors">
+                Unique Traditions
+              </button>
+            </div>
+
+            <!-- Facts Container -->
+            <div id="factsContainer" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <!-- Geography & Nature Facts -->
+              <div
+                class="fact-card geography bg-gradient-to-br from-green-50 to-emerald-100 p-6 rounded-xl border border-green-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      <path fill-rule="evenodd"
+                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-green-800">Island Nation</h3>
+                </div>
+                <p class="text-green-700">Japan consists of over 6,800 islands! While most people know the four main
+                  islands (Honshu, Hokkaido, Kyushu, and Shikoku), many smaller ones remain uninhabited.</p>
+              </div>
+
+              <div
+                class="fact-card geography bg-gradient-to-br from-amber-50 to-orange-100 p-6 rounded-xl border border-amber-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd"
+                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-amber-800">Mountainous Land</h3>
+                </div>
+                <p class="text-amber-700">About 70% of Japan is mountainous and forested, which means the population is
+                  highly concentrated in coastal areas. This creates some of the world's most densely populated cities.
+                </p>
+              </div>
+
+              <div
+                class="fact-card geography bg-gradient-to-br from-red-50 to-pink-100 p-6 rounded-xl border border-red-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd"
+                        d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-red-800">Ring of Fire</h3>
+                </div>
+                <p class="text-red-700">Japan experiences over 1,500 earthquakes per year due to its location on the
+                  Pacific Ring of Fire. It also has many active volcanoes, making it one of the most seismically active
+                  countries.</p>
+              </div>
+
+              <!-- Daily Life & Technology Facts -->
+              <div
+                class="fact-card daily-life bg-gradient-to-br from-blue-50 to-cyan-100 p-6 rounded-xl border border-blue-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-blue-800">Vending Machine Capital</h3>
+                </div>
+                <p class="text-blue-700">Japan has one vending machine for every 24 people! You can buy everything from
+                  hot soup and fresh eggs to toys and full meals. They're everywhere and incredibly convenient.</p>
+              </div>
+
+              <div
+                class="fact-card daily-life bg-gradient-to-br from-purple-50 to-violet-100 p-6 rounded-xl border border-purple-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-purple-800">Punctual Trains</h3>
+                </div>
+                <p class="text-purple-700">Japan's Shinkansen bullet trains are famous for their punctuality, with
+                  average delays of less than a minute. Railway companies even issue "late certificates" if trains are
+                  delayed!</p>
+              </div>
+
+              <div
+                class="fact-card daily-life bg-gradient-to-br from-teal-50 to-emerald-100 p-6 rounded-xl border border-teal-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-teal-800">Shibuya Crossing</h3>
+                </div>
+                <p class="text-teal-700">Tokyo's Shibuya Crossing is the world's busiest pedestrian crossing, with
+                  thousands of people crossing simultaneously during peak times. It's organized chaos at its finest!</p>
+              </div>
+
+              <!-- Culture & Customs Facts -->
+              <div
+                class="fact-card culture bg-gradient-to-br from-rose-50 to-pink-100 p-6 rounded-xl border border-rose-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-rose-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-rose-800">Slurping is Polite</h3>
+                </div>
+                <p class="text-rose-700">Unlike Western etiquette, slurping noodles in Japan is considered polite! It
+                  shows appreciation for the chef and is believed to enhance the flavor of ramen and soba.</p>
+              </div>
+
+              <div
+                class="fact-card culture bg-gradient-to-br from-indigo-50 to-blue-100 p-6 rounded-xl border border-indigo-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-indigo-800">Unlucky Number Four</h3>
+                </div>
+                <p class="text-indigo-700">The number four is considered unlucky because its pronunciation "shi" sounds
+                  like the word for "death." Many buildings skip the fourth floor, and items are sold in sets of three
+                  or five.</p>
+              </div>
+
+              <div
+                class="fact-card culture bg-gradient-to-br from-yellow-50 to-amber-100 p-6 rounded-xl border border-yellow-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 2L3 7v11a1 1 0 001 1h3v-8h6v8h3a1 1 0 001-1V7l-7-5z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-yellow-800">Shoes Off Culture</h3>
+                </div>
+                <p class="text-yellow-700">Removing shoes before entering homes, some restaurants, or temples is
+                  customary. Special slippers are provided for indoors, and separate ones for the bathroom!</p>
+              </div>
+
+              <!-- Unique Traditions Facts -->
+              <div
+                class="fact-card traditions bg-gradient-to-br from-pink-50 to-rose-100 p-6 rounded-xl border border-pink-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-pink-800">Hanami Tradition</h3>
+                </div>
+                <p class="text-pink-700">Cherry blossom viewing (hanami) is a beloved spring tradition where people
+                  gather for picnics under blooming sakura trees, celebrating the beauty and fleeting nature of life.
+                </p>
+              </div>
+
+              <div
+                class="fact-card traditions bg-gradient-to-br from-orange-50 to-red-100 p-6 rounded-xl border border-orange-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-orange-800">KFC Christmas</h3>
+                </div>
+                <p class="text-orange-700">Thanks to a clever 1970s marketing campaign, many Japanese families now eat
+                  KFC for Christmas dinner! It's become a unique holiday tradition that requires advance booking.</p>
+              </div>
+
+              <div
+                class="fact-card traditions bg-gradient-to-br from-emerald-50 to-green-100 p-6 rounded-xl border border-emerald-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                      <path fill-rule="evenodd"
+                        d="M4 5a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 1a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-emerald-800">Rabbit Island</h3>
+                </div>
+                <p class="text-emerald-700">Ōkunoshima, known as "Rabbit Island," is home to hundreds of wild but
+                  friendly rabbits that roam freely and greet visitors. It's one of Japan's most adorable tourist
+                  destinations!</p>
+              </div>
+
+              <div
+                class="fact-card culture bg-gradient-to-br from-violet-50 to-purple-100 p-6 rounded-xl border border-violet-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-violet-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd"
+                        d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-violet-800">No Tipping Culture</h3>
+                </div>
+                <p class="text-violet-700">Tipping is not part of Japanese culture and can even be considered rude. The
+                  price reflects the service value, and exceptional service is simply expected, not rewarded with extra
+                  payment.</p>
+              </div>
+
+              <div
+                class="fact-card daily-life bg-gradient-to-br from-cyan-50 to-blue-100 p-6 rounded-xl border border-cyan-200 hover:shadow-lg transition-shadow">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-cyan-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                      <path fill-rule="evenodd"
+                        d="M4 5a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 1a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <h3 class="text-lg font-bold text-cyan-800">Robot Hotels</h3>
+                </div>
+                <p class="text-cyan-700">Japan is home to the Henn na Hotel, staffed almost entirely by robots,
+                  including a dinosaur-shaped receptionist! It showcases Japan's embrace of cutting-edge technology in
+                  daily life.</p>
+              </div>
+            </div>
+
+            <!-- Fun Stats -->
+            <div class="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200">
+              <h3 class="text-xl font-bold text-indigo-800 mb-4 text-center">Did You Know?</h3>
+              <div class="grid md:grid-cols-3 gap-4 text-center">
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                  <div class="text-2xl font-bold text-indigo-600">6,800+</div>
+                  <div class="text-sm text-gray-600">Islands in Japan</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                  <div class="text-2xl font-bold text-purple-600">1,500+</div>
+                  <div class="text-sm text-gray-600">Earthquakes per year</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                  <div class="text-2xl font-bold text-pink-600">70%</div>
+                  <div class="text-sm text-gray-600">Mountainous terrain</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      <footer class="mt-12 rounded-t-2xl">
+        <div class="flex flex-col items-center justify-center py-6 space-y-3 text-sm text-gray-600">
+          <p>
+            Developed with ❤️ by <span class="font-semibold text-gray-800">Hithesh N Poojary </span>
+          </p>
+          <div class="flex space-x-4">
+            <a href="https://github.com/HitheshPoojary187" target="_blank" rel="noopener noreferrer"
+              class="flex items-center px-3 py-1.5 bg-white shadow-md rounded-full text-indigo-600 hover:text-white hover:bg-indigo-600 transition duration-300 ease-in-out">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
+                <path
+                  d="M12 .5C5.648.5.5 5.647.5 12c0 5.086 3.292 9.396 7.868 10.918.575.106.787-.25.787-.556v-2.06c-3.2.695-3.87-1.538-3.87-1.538-.523-1.33-1.28-1.686-1.28-1.686-1.046-.715.08-.7.08-.7 1.155.082 1.763 1.186 1.763 1.186 1.029 1.762 2.699 1.253 3.357.958.104-.746.402-1.253.73-1.541-2.554-.291-5.238-1.277-5.238-5.683 0-1.256.45-2.283 1.186-3.088-.12-.29-.514-1.463.112-3.052 0 0 .966-.309 3.165 1.179a11.02 11.02 0 012.88-.387c.977.004 1.963.132 2.88.387 2.198-1.488 3.163-1.179 3.163-1.179.628 1.589.234 2.762.114 3.052.738.805 1.185 1.832 1.185 3.088 0 4.418-2.688 5.388-5.253 5.672.41.354.776 1.055.776 2.126v3.146c0 .31.21.668.793.554C20.713 21.39 24 17.08 24 12c0-6.353-5.148-11.5-12-11.5z" />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
       // Typewriter with loop: type full text, pause, erase, pause, repeat
-      (function(){
-        function startTypewriterLoop(targetElement, fullText, options){
+      (function () {
+        function startTypewriterLoop(targetElement, fullText, options) {
           var settings = Object.assign({ startDelayMs: 250, typeDelayMs: 140, holdFullMs: 900, eraseDelayMs: 80, holdEmptyMs: 600 }, options || {});
           if (!targetElement || !fullText) return;
 
           var index = 0;
           var typing = true;
 
-          function tick(){
-            if (typing){
-              if (index <= fullText.length){
+          function tick() {
+            if (typing) {
+              if (index <= fullText.length) {
                 targetElement.textContent = fullText.slice(0, index);
                 index += 1;
                 setTimeout(tick, settings.typeDelayMs);
@@ -238,7 +843,7 @@
                 setTimeout(tick, settings.holdFullMs);
               }
             } else {
-              if (index > 0){
+              if (index > 0) {
                 index -= 1;
                 targetElement.textContent = fullText.slice(0, index);
                 setTimeout(tick, settings.eraseDelayMs);
@@ -252,7 +857,7 @@
           setTimeout(tick, settings.startDelayMs);
         }
 
-        function initTypewriter(){
+        function initTypewriter() {
           var el = document.getElementById('typewriterText');
           startTypewriterLoop(el, 'こんにちは');
         }
@@ -263,461 +868,926 @@
           initTypewriter();
         }
       })();
-    </script>
-    <script>
-      (function(){
-        // --- Translator logic (from workspace, adapted) ---
-        var API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:5000' : '';
-        var _wanakanaLoading = null;
-        function loadScript(src){
-          return new Promise(function(resolve, reject){
-            var s = document.createElement('script');
-            s.src = src; s.async = true; s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
-          });
+  </script>
+
+  <script>
+    // Enhanced Loading Screen Logic
+    (function () {
+      const loadingScreen = document.getElementById('loadingScreen');
+      const loadingText = document.getElementById('loadingText');
+      const progressBar = document.getElementById('progressBar');
+
+      const loadingSteps = [
+        { text: "Initializing...", progress: 10 },
+        { text: "Loading Japanese characters...", progress: 25 },
+        { text: "Preparing flashcards...", progress: 40 },
+        { text: "Setting up translator...", progress: 60 },
+        { text: "Loading phrase database...", progress: 80 },
+        { text: "Finalizing setup...", progress: 95 },
+        { text: "Ready!", progress: 100 }
+      ];
+
+      let currentStep = 0;
+
+      function updateLoadingStep() {
+        if (currentStep < loadingSteps.length) {
+          const step = loadingSteps[currentStep];
+          loadingText.textContent = step.text;
+          progressBar.style.width = step.progress + '%';
+          currentStep++;
+
+          // Vary timing for more realistic feel
+          const delay = currentStep === loadingSteps.length ? 500 : (800 + Math.random() * 400);
+          setTimeout(updateLoadingStep, delay);
+        } else {
+          // Hide loading screen with fade out
+          setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            loadingScreen.style.transition = 'opacity 0.8s ease-out';
+            setTimeout(() => {
+              loadingScreen.style.display = 'none';
+            }, 800);
+          }, 300);
         }
-        async function ensureWanakana(){
-          if (window.wanakana) return;
-          if (_wanakanaLoading) { await _wanakanaLoading; return; }
-          var cdnPrimary = 'https://cdn.jsdelivr.net/npm/wanakana@5.1.0/umd/wanakana.min.js';
-          var cdnFallback = 'https://unpkg.com/wanakana@5.1.0/umd/wanakana.min.js';
-          _wanakanaLoading = (async function(){
-            try { await loadScript(cdnPrimary); }
-            catch(_) { try { await loadScript(cdnFallback); } catch(e){} }
-          })();
-          await _wanakanaLoading;
-        }
+      }
 
-        var elInput = document.getElementById('inputText');
-        var elType = document.getElementById('inputType');
-        var elBtn = document.getElementById('translateBtn');
-        var elOut = document.getElementById('outputText');
+      // Start loading sequence
+      setTimeout(updateLoadingStep, 500);
 
-        async function doTranslate(){
-          await ensureWanakana();
-          var text = (elInput && elInput.value || '').trim();
-          var type = elType ? elType.value : 'japanese';
-          if (!text) { if (elOut){ elOut.classList.remove('hidden'); elOut.textContent = 'Please enter text.'; } return; }
-
-          var sendText = text;
-          if (type === 'romanji' && window.wanakana) {
-            sendText = window.wanakana.toHiragana(text);
+      // Ensure loading screen is hidden if page loads very quickly
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          if (loadingScreen.style.display !== 'none') {
+            loadingScreen.style.opacity = '0';
+            loadingScreen.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => {
+              loadingScreen.style.display = 'none';
+            }, 500);
           }
-          // Debug info display removed
+        }, 2000); // Minimum 2 seconds display time
+      });
+    })();
 
-          var loader = document.getElementById('jpLoader');
-          var petalsHost = document.getElementById('jpLoaderPetals');
-          function showLoader(){
-            if (!loader) return;
-            loader.classList.remove('hidden');
-            if (petalsHost) {
-              petalsHost.innerHTML = '';
-              for (var i = 0; i < 18; i++) {
-                var p = document.createElement('div');
-                p.className = 'sakura-petal';
-                var left = Math.random() * 100;
-                var delay = Math.random() * 1.5;
-                var duration = 2.5 + Math.random() * 2.5;
-                var scale = 0.8 + Math.random() * 0.8;
-                p.style.left = left + '%';
-                p.style.top = (-10 - Math.random()*20) + 'px';
-                p.style.transform = 'scale(' + scale + ')';
-                p.style.animation = 'petalFall ' + duration + 's linear ' + delay + 's infinite';
-                petalsHost.appendChild(p);
-              }
+
+  </script>
+
+  <script>
+    (function () {
+      // --- Translator logic (from workspace, adapted) ---
+      var API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:5000' : '';
+      var _wanakanaLoading = null;
+      function loadScript(src) {
+        return new Promise(function (resolve, reject) {
+          var s = document.createElement('script');
+          s.src = src; s.async = true; s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+        });
+      }
+      async function ensureWanakana() {
+        if (window.wanakana) return;
+        if (_wanakanaLoading) { await _wanakanaLoading; return; }
+        var cdnPrimary = 'https://cdn.jsdelivr.net/npm/wanakana@5.1.0/umd/wanakana.min.js';
+        var cdnFallback = 'https://unpkg.com/wanakana@5.1.0/umd/wanakana.min.js';
+        _wanakanaLoading = (async function () {
+          try { await loadScript(cdnPrimary); }
+          catch (_) { try { await loadScript(cdnFallback); } catch (e) { } }
+        })();
+        await _wanakanaLoading;
+      }
+
+      var elInput = document.getElementById('inputText');
+      var elType = document.getElementById('inputType');
+      var elBtn = document.getElementById('translateBtn');
+      var elOut = document.getElementById('outputText');
+
+      async function doTranslate() {
+        await ensureWanakana();
+        var text = (elInput && elInput.value || '').trim();
+        var type = elType ? elType.value : 'japanese';
+        if (!text) { if (elOut) { elOut.classList.remove('hidden'); elOut.textContent = 'Please enter text.'; } return; }
+
+        var sendText = text;
+        if (type === 'romanji' && window.wanakana) {
+          sendText = window.wanakana.toHiragana(text);
+        }
+        // Debug info display removed
+
+        function showLoader() {
+          if (!elOut) return;
+          elOut.classList.remove('hidden');
+          elOut.innerHTML = '';
+          var container = document.createElement('div');
+          container.className = 'relative select-none';
+          var center = document.createElement('div');
+          center.className = 'flex items-center justify-center';
+          center.innerHTML = '<svg class="loader-torii w-16 h-16 text-rose-500" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">\
+<rect x="6" y="10" width="52" height="6" rx="2"></rect>\
+<rect x="10" y="18" width="44" height="4" rx="2"></rect>\
+<rect x="14" y="22" width="6" height="32" rx="1"></rect>\
+<rect x="44" y="22" width="6" height="32" rx="1"></rect>\
+<rect x="20" y="30" width="4" height="24" rx="1"></rect>\
+<rect x="40" y="30" width="4" height="24" rx="1"></rect></svg>';
+          var petalsHost = document.createElement('div');
+          petalsHost.className = 'pointer-events-none absolute inset-0 overflow-hidden';
+          petalsHost.style.height = '96px';
+          for (var i = 0; i < 18; i++) {
+            var p = document.createElement('div');
+            p.className = 'sakura-petal';
+            var left = Math.random() * 100;
+            var delay = Math.random() * 1.5;
+            var duration = 2.5 + Math.random() * 2.5;
+            var scale = 0.8 + Math.random() * 0.8;
+            p.style.left = left + '%';
+            p.style.top = (-10 - Math.random() * 20) + 'px';
+            p.style.transform = 'scale(' + scale + ')';
+            p.style.animation = 'petalFall ' + duration + 's linear ' + delay + 's infinite';
+            petalsHost.appendChild(p);
+          }
+          var label = document.createElement('div');
+          label.className = 'text-center text-sm text-rose-500 mt-2';
+          label.textContent = '桜が舞っています… Translating';
+          container.appendChild(center);
+          container.appendChild(petalsHost);
+          container.appendChild(label);
+          elOut.appendChild(container);
+        }
+        function hideLoader() { /* output will be replaced by result */ }
+
+        try {
+          showLoader();
+          var url = API_BASE + '/translate?text=' + encodeURIComponent(sendText) + '&inputType=' + encodeURIComponent(type);
+          var res = await fetch(url);
+          var data = await res.json();
+          if (data && data.error) {
+            if (elOut) { elOut.classList.remove('hidden'); elOut.textContent = 'Error: ' + data.error; }
+            return;
+          }
+
+          var html = '';
+          if (type === 'japanese') {
+            html = '<strong>Romanji:</strong> ' + (data.romanized || '-') + '<br><strong>English:</strong> ' + (data.translated || '-');
+          } else if (type === 'romanji') {
+            if (!data.translated || data.translated.trim() === text.trim()) {
+              html = '<strong>English:</strong> <span style="color:#888">No translation found</span>';
+            } else {
+              html = '<strong>English:</strong> ' + data.translated;
             }
+          } else if (type === 'english') {
+            var roman = data.romanized;
+            if (!roman && window.wanakana && data.translated) { roman = window.wanakana.toRomaji(data.translated); }
+            html = '<strong>Romanji:</strong> ' + (roman || '-');
           }
-          function hideLoader(){ if (loader) loader.classList.add('hidden'); }
+          if (elOut) { elOut.classList.remove('hidden'); elOut.innerHTML = html; }
+        } catch (e) {
+          if (elOut) { elOut.classList.remove('hidden'); elOut.textContent = 'Failed to contact server. Is the server running?'; }
+        }
+        finally { hideLoader(); }
+      }
 
-          try {
-            showLoader();
-            var url = API_BASE + '/translate?text=' + encodeURIComponent(sendText) + '&inputType=' + encodeURIComponent(type);
-            var res = await fetch(url);
-            var data = await res.json();
-            if (data && data.error){
-              if (elOut){ elOut.classList.remove('hidden'); elOut.textContent = 'Error: ' + data.error; }
-              return;
-            }
+      if (elBtn) elBtn.addEventListener('click', doTranslate);
+      if (elInput) elInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') doTranslate(); });
+      if (elType) elType.addEventListener('change', function () { if (!elInput) return; elInput.placeholder = (elType.value === 'japanese') ? 'Type Japanese text...' : (elType.value === 'romanji' ? 'Type Romanji text...' : 'Type English text...'); });
 
-            var html = '';
-            if (type === 'japanese'){
-              html = '<strong>Romanji:</strong> ' + (data.romanized || '-') + '<br><strong>English:</strong> ' + (data.translated || '-');
-            } else if (type === 'romanji'){
-              if (!data.translated || data.translated.trim() === text.trim()){
-                html = '<strong>English:</strong> <span style="color:#888">No translation found</span>';
-              } else {
-                html = '<strong>English:</strong> ' + data.translated;
-              }
-            } else if (type === 'english'){
-              var roman = data.romanized;
-              if (!roman && window.wanakana && data.translated){ roman = window.wanakana.toRomaji(data.translated); }
-              html = '<strong>Romanji:</strong> ' + (roman || '-');
-            }
-            if (elOut){ elOut.classList.remove('hidden'); elOut.innerHTML = html; }
-          } catch(e){
-            if (elOut){ elOut.classList.remove('hidden'); elOut.textContent = 'Failed to contact server. Is the server running?'; }
-          }
-          finally { hideLoader(); }
+      // --- Pronunciation functionality ---
+      var elRomanjiInput = document.getElementById('romanjiInput');
+      var elSpeakBtn = document.getElementById('speakBtn');
+      var elJapaneseOutput = document.getElementById('japaneseOutput');
+      var elJapaneseText = document.getElementById('japaneseText');
+      var elPronunciationStatus = document.getElementById('pronunciationStatus');
+
+      async function speakJapanese() {
+        await ensureWanakana();
+        var romanji = (elRomanjiInput && elRomanjiInput.value || '').trim();
+        if (!romanji) {
+          if (elPronunciationStatus) elPronunciationStatus.textContent = 'Please type a word!';
+          return;
         }
 
-        if (elBtn) elBtn.addEventListener('click', doTranslate);
-        if (elInput) elInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') doTranslate(); });
-        if (elType) elType.addEventListener('change', function(){ if (!elInput) return; elInput.placeholder = (elType.value === 'japanese') ? 'Type Japanese text...' : (elType.value === 'romanji' ? 'Type Romanji text...' : 'Type English text...'); });
+        // Convert to Hiragana
+        var japaneseWord = window.wanakana ? window.wanakana.toHiragana(romanji) : romanji;
 
-        // Data
-        var hiragana = [
-          { char: "あ", romaji: "a" }, { char: "い", romaji: "i" }, { char: "う", romaji: "u" }, { char: "え", romaji: "e" }, { char: "お", romaji: "o" },
-          { char: "か", romaji: "ka" }, { char: "き", romaji: "ki" }, { char: "く", romaji: "ku" }, { char: "け", romaji: "ke" }, { char: "こ", romaji: "ko" },
-          { char: "さ", romaji: "sa" }, { char: "し", romaji: "shi" }, { char: "す", romaji: "su" }, { char: "せ", romaji: "se" }, { char: "そ", romaji: "so" },
-          { char: "た", romaji: "ta" }, { char: "ち", romaji: "chi" }, { char: "つ", romaji: "tsu" }, { char: "て", romaji: "te" }, { char: "と", romaji: "to" },
-          { char: "な", romaji: "na" }, { char: "に", romaji: "ni" }, { char: "ぬ", romaji: "nu" }, { char: "ね", romaji: "ne" }, { char: "の", romaji: "no" },
-          { char: "は", romaji: "ha" }, { char: "ひ", romaji: "hi" }, { char: "ふ", romaji: "fu" }, { char: "へ", romaji: "he" }, { char: "ほ", romaji: "ho" },
-          { char: "ま", romaji: "ma" }, { char: "み", romaji: "mi" }, { char: "む", romaji: "mu" }, { char: "め", romaji: "me" }, { char: "も", romaji: "mo" },
-          { char: "や", romaji: "ya" }, { char: "ゆ", romaji: "yu" }, { char: "よ", romaji: "yo" },
-          { char: "ら", romaji: "ra" }, { char: "り", romaji: "ri" }, { char: "る", romaji: "ru" }, { char: "れ", romaji: "re" }, { char: "ろ", romaji: "ro" },
-          { char: "わ", romaji: "wa" }, { char: "を", romaji: "wo" },
-          { char: "ん", romaji: "n" },
-          { char: "が", romaji: "ga" }, { char: "ぎ", romaji: "gi" }, { char: "ぐ", romaji: "gu" }, { char: "げ", romaji: "ge" }, { char: "ご", romaji: "go" },
-          { char: "ざ", romaji: "za" }, { char: "じ", romaji: "ji" }, { char: "ず", romaji: "zu" }, { char: "ぜ", romaji: "ze" }, { char: "ぞ", romaji: "zo" },
-          { char: "だ", romaji: "da" }, { char: "ぢ", romaji: "ji" }, { char: "づ", romaji: "zu" }, { char: "で", romaji: "de" }, { char: "ど", romaji: "do" },
-          { char: "ば", romaji: "ba" }, { char: "び", romaji: "bi" }, { char: "ぶ", romaji: "bu" }, { char: "べ", romaji: "be" }, { char: "ぼ", romaji: "bo" },
-          { char: "ぱ", romaji: "pa" }, { char: "ぴ", romaji: "pi" }, { char: "ぷ", romaji: "pu" }, { char: "ぺ", romaji: "pe" }, { char: "ぽ", romaji: "po" },
-          { char: "きゃ", romaji: "kya" }, { char: "きゅ", romaji: "kyu" }, { char: "きょ", romaji: "kyo" },
-          { char: "しゃ", romaji: "sha" }, { char: "しゅ", romaji: "shu" }, { char: "しょ", romaji: "sho" },
-          { char: "ちゃ", romaji: "cha" }, { char: "ちゅ", romaji: "chu" }, { char: "ちょ", romaji: "cho" },
-          { char: "にゃ", romaji: "nya" }, { char: "にゅ", romaji: "nyu" }, { char: "にょ", romaji: "nyo" },
-          { char: "ひゃ", romaji: "hya" }, { char: "ひゅ", romaji: "hyu" }, { char: "ひょ", romaji: "hyo" },
-          { char: "みゃ", romaji: "mya" }, { char: "みゅ", romaji: "myu" }, { char: "みょ", romaji: "myo" },
-          { char: "りゃ", romaji: "rya" }, { char: "りゅ", romaji: "ryu" }, { char: "りょ", romaji: "ryo" },
-          { char: "ぎゃ", romaji: "gya" }, { char: "ぎゅ", romaji: "gyu" }, { char: "ぎょ", romaji: "gyo" },
-          { char: "じゃ", romaji: "ja" }, { char: "じゅ", romaji: "ju" }, { char: "じょ", romaji: "jo" },
-          { char: "びゃ", romaji: "bya" }, { char: "びゅ", romaji: "byu" }, { char: "びょ", romaji: "byo" },
-          { char: "ぴゃ", romaji: "pya" }, { char: "ぴゅ", romaji: "pyu" }, { char: "ぴょ", romaji: "pyo" },
-        ];
+        // Display the Japanese text
+        if (elJapaneseText) elJapaneseText.textContent = japaneseWord;
+        if (elJapaneseOutput) elJapaneseOutput.classList.remove('hidden');
 
-        var katakana = [
-          { char: "ア", romaji: "a" }, { char: "イ", romaji: "i" }, { char: "ウ", romaji: "u" }, { char: "エ", romaji: "e" }, { char: "オ", romaji: "o" },
-          { char: "カ", romaji: "ka" }, { char: "キ", romaji: "ki" }, { char: "ク", romaji: "ku" }, { char: "ケ", romaji: "ke" }, { char: "コ", romaji: "ko" },
-          { char: "サ", romaji: "sa" }, { char: "シ", romaji: "shi" }, { char: "ス", romaji: "su" }, { char: "セ", romaji: "se" }, { char: "ソ", romaji: "so" },
-          { char: "タ", romaji: "ta" }, { char: "チ", romaji: "chi" }, { char: "ツ", romaji: "tsu" }, { char: "テ", romaji: "te" }, { char: "ト", romaji: "to" },
-          { char: "ナ", romaji: "na" }, { char: "ニ", romaji: "ni" }, { char: "ヌ", romaji: "nu" }, { char: "ネ", romaji: "ne" }, { char: "ノ", romaji: "no" },
-          { char: "ハ", romaji: "ha" }, { char: "ヒ", romaji: "hi" }, { char: "フ", romaji: "fu" }, { char: "ヘ", romaji: "he" }, { char: "ホ", romaji: "ho" },
-          { char: "マ", romaji: "ma" }, { char: "ミ", romaji: "mi" }, { char: "ム", romaji: "mu" }, { char: "メ", romaji: "me" }, { char: "モ", romaji: "mo" },
-          { char: "ヤ", romaji: "ya" }, { char: "ユ", romaji: "yu" }, { char: "ヨ", romaji: "yo" },
-          { char: "ラ", romaji: "ra" }, { char: "リ", romaji: "ri" }, { char: "ル", romaji: "ru" }, { char: "レ", romaji: "re" }, { char: "ロ", romaji: "ro" },
-          { char: "ワ", romaji: "wa" }, { char: "ヲ", romaji: "wo" },
-          { char: "ン", romaji: "n" },
-          { char: "ガ", romaji: "ga" }, { char: "ギ", romaji: "gi" }, { char: "グ", romaji: "gu" }, { char: "ゲ", romaji: "ge" }, { char: "ゴ", romaji: "go" },
-          { char: "ザ", romaji: "za" }, { char: "ジ", romaji: "ji" }, { char: "ズ", romaji: "zu" }, { char: "ゼ", romaji: "ze" }, { char: "ゾ", romaji: "zo" },
-          { char: "ダ", romaji: "da" }, { char: "ヂ", romaji: "ji" }, { char: "ヅ", romaji: "zu" }, { char: "デ", romaji: "de" }, { char: "ド", romaji: "do" },
-          { char: "バ", romaji: "ba" }, { char: "ビ", romaji: "bi" }, { char: "ブ", romaji: "bu" }, { char: "ベ", romaji: "be" }, { char: "ボ", romaji: "bo" },
-          { char: "パ", romaji: "pa" }, { char: "ピ", romaji: "pi" }, { char: "プ", romaji: "pu" }, { char: "ペ", romaji: "pe" }, { char: "ポ", romaji: "po" },
-          { char: "キャ", romaji: "kya" }, { char: "キュ", romaji: "kyu" }, { char: "キョ", romaji: "kyo" },
-          { char: "シャ", romaji: "sha" }, { char: "シュ", romaji: "shu" }, { char: "ショ", romaji: "sho" },
-          { char: "チャ", romaji: "cha" }, { char: "チュ", romaji: "chu" }, { char: "チョ", romaji: "cho" },
-          { char: "ニャ", romaji: "nya" }, { char: "ニュ", romaji: "nyu" }, { char: "ニョ", romaji: "nyo" },
-          { char: "ヒャ", romaji: "hya" }, { char: "ヒュ", romaji: "hyu" }, { char: "ヒョ", romaji: "hyo" },
-          { char: "ミャ", romaji: "mya" }, { char: "ミュ", romaji: "myu" }, { char: "ミョ", romaji: "myo" },
-          { char: "リャ", romaji: "rya" }, { char: "リュ", romaji: "ryu" }, { char: "リョ", romaji: "ryo" },
-          { char: "ギャ", romaji: "gya" }, { char: "ギュ", romaji: "gyu" }, { char: "ギョ", romaji: "gyo" },
-          { char: "ジャ", romaji: "ja" }, { char: "ジュ", romaji: "ju" }, { char: "ジョ", romaji: "jo" },
-          { char: "ビャ", romaji: "bya" }, { char: "ビュ", romaji: "byu" }, { char: "ビョ", romaji: "byo" },
-          { char: "ピャ", romaji: "pya" }, { char: "ピュ", romaji: "pyu" }, { char: "ピョ", romaji: "pyo" },
-        ];
-
-        function shuffleArray(arr){
-          var a = arr.slice();
-          for (var i = a.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var t = a[i]; a[i] = a[j]; a[j] = t;
-          }
-          return a;
+        // Use Web Speech API to speak the Japanese word
+        if ('speechSynthesis' in window) {
+          var utterance = new SpeechSynthesisUtterance(japaneseWord);
+          utterance.lang = 'ja-JP'; // Japanese language
+          utterance.rate = 0.8; // Slightly slower for learning
+          utterance.onstart = function () {
+            if (elPronunciationStatus) elPronunciationStatus.textContent = 'Speaking...';
+          };
+          utterance.onend = function () {
+            if (elPronunciationStatus) elPronunciationStatus.textContent = 'Ready';
+          };
+          utterance.onerror = function () {
+            if (elPronunciationStatus) elPronunciationStatus.textContent = 'Speech not available';
+          };
+          speechSynthesis.speak(utterance);
+        } else {
+          if (elPronunciationStatus) elPronunciationStatus.textContent = 'Speech synthesis not supported';
         }
+      }
 
-        var createSection = document.getElementById('createSection');
-        var numInput = document.getElementById('numInput');
-        var createBtn = document.getElementById('createBtn');
-        var optionsPanel = document.getElementById('optionsPanel');
+      if (elSpeakBtn) elSpeakBtn.addEventListener('click', speakJapanese);
+      if (elRomanjiInput) elRomanjiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') speakJapanese(); });
 
-        // Nav and sections
-        var homeSection = document.getElementById('homeSection');
-        var translatorSection = document.getElementById('translatorSection');
-        var btnNavHome = document.getElementById('btnNavHome');
-        var btnNavFlashcards = document.getElementById('btnNavFlashcards');
-        var btnNavTranslator = document.getElementById('btnNavTranslator');
+      // Data
+      var hiragana = [
+        { char: "あ", romaji: "a" }, { char: "い", romaji: "i" }, { char: "う", romaji: "u" }, { char: "え", romaji: "e" }, { char: "お", romaji: "o" },
+        { char: "か", romaji: "ka" }, { char: "き", romaji: "ki" }, { char: "く", romaji: "ku" }, { char: "け", romaji: "ke" }, { char: "こ", romaji: "ko" },
+        { char: "さ", romaji: "sa" }, { char: "し", romaji: "shi" }, { char: "す", romaji: "su" }, { char: "せ", romaji: "se" }, { char: "そ", romaji: "so" },
+        { char: "た", romaji: "ta" }, { char: "ち", romaji: "chi" }, { char: "つ", romaji: "tsu" }, { char: "て", romaji: "te" }, { char: "と", romaji: "to" },
+        { char: "な", romaji: "na" }, { char: "に", romaji: "ni" }, { char: "ぬ", romaji: "nu" }, { char: "ね", romaji: "ne" }, { char: "の", romaji: "no" },
+        { char: "は", romaji: "ha" }, { char: "ひ", romaji: "hi" }, { char: "ふ", romaji: "fu" }, { char: "へ", romaji: "he" }, { char: "ほ", romaji: "ho" },
+        { char: "ま", romaji: "ma" }, { char: "み", romaji: "mi" }, { char: "む", romaji: "mu" }, { char: "め", romaji: "me" }, { char: "も", romaji: "mo" },
+        { char: "や", romaji: "ya" }, { char: "ゆ", romaji: "yu" }, { char: "よ", romaji: "yo" },
+        { char: "ら", romaji: "ra" }, { char: "り", romaji: "ri" }, { char: "る", romaji: "ru" }, { char: "れ", romaji: "re" }, { char: "ろ", romaji: "ro" },
+        { char: "わ", romaji: "wa" }, { char: "を", romaji: "wo" },
+        { char: "ん", romaji: "n" },
+        { char: "が", romaji: "ga" }, { char: "ぎ", romaji: "gi" }, { char: "ぐ", romaji: "gu" }, { char: "げ", romaji: "ge" }, { char: "ご", romaji: "go" },
+        { char: "ざ", romaji: "za" }, { char: "じ", romaji: "ji" }, { char: "ず", romaji: "zu" }, { char: "ぜ", romaji: "ze" }, { char: "ぞ", romaji: "zo" },
+        { char: "だ", romaji: "da" }, { char: "ぢ", romaji: "ji" }, { char: "づ", romaji: "zu" }, { char: "で", romaji: "de" }, { char: "ど", romaji: "do" },
+        { char: "ば", romaji: "ba" }, { char: "び", romaji: "bi" }, { char: "ぶ", romaji: "bu" }, { char: "べ", romaji: "be" }, { char: "ぼ", romaji: "bo" },
+        { char: "ぱ", romaji: "pa" }, { char: "ぴ", romaji: "pi" }, { char: "ぷ", romaji: "pu" }, { char: "ぺ", romaji: "pe" }, { char: "ぽ", romaji: "po" },
+        { char: "きゃ", romaji: "kya" }, { char: "きゅ", romaji: "kyu" }, { char: "きょ", romaji: "kyo" },
+        { char: "しゃ", romaji: "sha" }, { char: "しゅ", romaji: "shu" }, { char: "しょ", romaji: "sho" },
+        { char: "ちゃ", romaji: "cha" }, { char: "ちゅ", romaji: "chu" }, { char: "ちょ", romaji: "cho" },
+        { char: "にゃ", romaji: "nya" }, { char: "にゅ", romaji: "nyu" }, { char: "にょ", romaji: "nyo" },
+        { char: "ひゃ", romaji: "hya" }, { char: "ひゅ", romaji: "hyu" }, { char: "ひょ", romaji: "hyo" },
+        { char: "みゃ", romaji: "mya" }, { char: "みゅ", romaji: "myu" }, { char: "みょ", romaji: "myo" },
+        { char: "りゃ", romaji: "rya" }, { char: "りゅ", romaji: "ryu" }, { char: "りょ", romaji: "ryo" },
+        { char: "ぎゃ", romaji: "gya" }, { char: "ぎゅ", romaji: "gyu" }, { char: "ぎょ", romaji: "gyo" },
+        { char: "じゃ", romaji: "ja" }, { char: "じゅ", romaji: "ju" }, { char: "じょ", romaji: "jo" },
+        { char: "びゃ", romaji: "bya" }, { char: "びゅ", romaji: "byu" }, { char: "びょ", romaji: "byo" },
+        { char: "ぴゃ", romaji: "pya" }, { char: "ぴゅ", romaji: "pyu" }, { char: "ぴょ", romaji: "pyo" },
+      ];
 
-        var btnHiragana = document.getElementById('btnHiragana');
-        var btnKatakana = document.getElementById('btnKatakana');
-        var btnCharToRomaji = document.getElementById('btnCharToRomaji');
-        var btnRomajiToChar = document.getElementById('btnRomajiToChar');
-        var flipBtn = document.getElementById('flipBtn');
-        var nextBtn = document.getElementById('nextBtn');
-        var resetBtn = document.getElementById('resetBtn');
-        var restartBtn = document.getElementById('restartBtn');
-        var flashcard = document.getElementById('flashcard');
-        var frontText = document.getElementById('frontText');
-        var backText = document.getElementById('backText');
-        var countText = document.getElementById('countText');
-        var cardArea = document.getElementById('cardArea');
-        var sessionComplete = document.getElementById('sessionComplete');
+      var katakana = [
+        { char: "ア", romaji: "a" }, { char: "イ", romaji: "i" }, { char: "ウ", romaji: "u" }, { char: "エ", romaji: "e" }, { char: "オ", romaji: "o" },
+        { char: "カ", romaji: "ka" }, { char: "キ", romaji: "ki" }, { char: "ク", romaji: "ku" }, { char: "ケ", romaji: "ke" }, { char: "コ", romaji: "ko" },
+        { char: "サ", romaji: "sa" }, { char: "シ", romaji: "shi" }, { char: "ス", romaji: "su" }, { char: "セ", romaji: "se" }, { char: "ソ", romaji: "so" },
+        { char: "タ", romaji: "ta" }, { char: "チ", romaji: "chi" }, { char: "ツ", romaji: "tsu" }, { char: "テ", romaji: "te" }, { char: "ト", romaji: "to" },
+        { char: "ナ", romaji: "na" }, { char: "ニ", romaji: "ni" }, { char: "ヌ", romaji: "nu" }, { char: "ネ", romaji: "ne" }, { char: "ノ", romaji: "no" },
+        { char: "ハ", romaji: "ha" }, { char: "ヒ", romaji: "hi" }, { char: "フ", romaji: "fu" }, { char: "ヘ", romaji: "he" }, { char: "ホ", romaji: "ho" },
+        { char: "マ", romaji: "ma" }, { char: "ミ", romaji: "mi" }, { char: "ム", romaji: "mu" }, { char: "メ", romaji: "me" }, { char: "モ", romaji: "mo" },
+        { char: "ヤ", romaji: "ya" }, { char: "ユ", romaji: "yu" }, { char: "ヨ", romaji: "yo" },
+        { char: "ラ", romaji: "ra" }, { char: "リ", romaji: "ri" }, { char: "ル", romaji: "ru" }, { char: "レ", romaji: "re" }, { char: "ロ", romaji: "ro" },
+        { char: "ワ", romaji: "wa" }, { char: "ヲ", romaji: "wo" },
+        { char: "ン", romaji: "n" },
+        { char: "ガ", romaji: "ga" }, { char: "ギ", romaji: "gi" }, { char: "グ", romaji: "gu" }, { char: "ゲ", romaji: "ge" }, { char: "ゴ", romaji: "go" },
+        { char: "ザ", romaji: "za" }, { char: "ジ", romaji: "ji" }, { char: "ズ", romaji: "zu" }, { char: "ゼ", romaji: "ze" }, { char: "ゾ", romaji: "zo" },
+        { char: "ダ", romaji: "da" }, { char: "ヂ", romaji: "ji" }, { char: "ヅ", romaji: "zu" }, { char: "デ", romaji: "de" }, { char: "ド", romaji: "do" },
+        { char: "バ", romaji: "ba" }, { char: "ビ", romaji: "bi" }, { char: "ブ", romaji: "bu" }, { char: "ベ", romaji: "be" }, { char: "ボ", romaji: "bo" },
+        { char: "パ", romaji: "pa" }, { char: "ピ", romaji: "pi" }, { char: "プ", romaji: "pu" }, { char: "ペ", romaji: "pe" }, { char: "ポ", romaji: "po" },
+        { char: "キャ", romaji: "kya" }, { char: "キュ", romaji: "kyu" }, { char: "キョ", romaji: "kyo" },
+        { char: "シャ", romaji: "sha" }, { char: "シュ", romaji: "shu" }, { char: "ショ", romaji: "sho" },
+        { char: "チャ", romaji: "cha" }, { char: "チュ", romaji: "chu" }, { char: "チョ", romaji: "cho" },
+        { char: "ニャ", romaji: "nya" }, { char: "ニュ", romaji: "nyu" }, { char: "ニョ", romaji: "nyo" },
+        { char: "ヒャ", romaji: "hya" }, { char: "ヒュ", romaji: "hyu" }, { char: "ヒョ", romaji: "hyo" },
+        { char: "ミャ", romaji: "mya" }, { char: "ミュ", romaji: "myu" }, { char: "ミョ", romaji: "myo" },
+        { char: "リャ", romaji: "rya" }, { char: "リュ", romaji: "ryu" }, { char: "リョ", romaji: "ryo" },
+        { char: "ギャ", romaji: "gya" }, { char: "ギュ", romaji: "gyu" }, { char: "ギョ", romaji: "gyo" },
+        { char: "ジャ", romaji: "ja" }, { char: "ジュ", romaji: "ju" }, { char: "ジョ", romaji: "jo" },
+        { char: "ビャ", romaji: "bya" }, { char: "ビュ", romaji: "byu" }, { char: "ビョ", romaji: "byo" },
+        { char: "ピャ", romaji: "pya" }, { char: "ピュ", romaji: "pyu" }, { char: "ピョ", romaji: "pyo" },
+      ];
 
-        var desiredCount = 10;
-        var currentAlphabet = hiragana;
-        var mode = 'charToRomaji';
-        var deck = [];
-        var currentIndex = 0;
-        var isFlipped = false;
-        var isSessionCompleted = false;
-
-        function setNavActive(target){
-          // Reset all
-          if (btnNavHome) {
-            btnNavHome.classList.remove('bg-indigo-600','text-white','shadow-lg');
-            btnNavHome.classList.add('bg-white','text-gray-800','hover:bg-gray-100');
-          }
-          if (btnNavFlashcards) {
-            btnNavFlashcards.classList.remove('bg-indigo-600','text-white','shadow-lg');
-            btnNavFlashcards.classList.add('bg-white','text-gray-800','hover:bg-gray-100');
-          }
-          if (btnNavTranslator) {
-            btnNavTranslator.classList.remove('bg-indigo-600','text-white','shadow-lg');
-            btnNavTranslator.classList.add('bg-white','text-gray-800','hover:bg-gray-100');
-          }
-
-          if (target === 'home' && btnNavHome){
-            btnNavHome.classList.add('bg-indigo-600','text-white','shadow-lg');
-            btnNavHome.classList.remove('bg-white','text-gray-800','hover:bg-gray-100');
-          }
-          if (target === 'flashcards' && btnNavFlashcards){
-            btnNavFlashcards.classList.add('bg-indigo-600','text-white','shadow-lg');
-            btnNavFlashcards.classList.remove('bg-white','text-gray-800','hover:bg-gray-100');
-          }
-          if (target === 'translator' && btnNavTranslator){
-            btnNavTranslator.classList.add('bg-indigo-600','text-white','shadow-lg');
-            btnNavTranslator.classList.remove('bg-white','text-gray-800','hover:bg-gray-100');
-          }
+      function shuffleArray(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
         }
+        return a;
+      }
 
-        function hideFlashcardUI(){
-          cardArea.classList.add('hidden');
-          sessionComplete.classList.add('hidden');
-          optionsPanel.classList.add('hidden');
-          resetBtn.classList.add('hidden');
+      var createSection = document.getElementById('createSection');
+      var numInput = document.getElementById('numInput');
+      var createBtn = document.getElementById('createBtn');
+      var optionsPanel = document.getElementById('optionsPanel');
+
+      // Nav and sections
+      var homeSection = document.getElementById('homeSection');
+      var translatorSection = document.getElementById('translatorSection');
+      var pronunciationSection = document.getElementById('pronunciationSection');
+      var btnNavHome = document.getElementById('btnNavHome');
+      var btnNavFlashcards = document.getElementById('btnNavFlashcards');
+      var btnNavTranslator = document.getElementById('btnNavTranslator');
+      var btnNavPronunciation = document.getElementById('btnNavPronunciation');
+
+      var btnHiragana = document.getElementById('btnHiragana');
+      var btnKatakana = document.getElementById('btnKatakana');
+      var btnCharToRomaji = document.getElementById('btnCharToRomaji');
+      var btnRomajiToChar = document.getElementById('btnRomajiToChar');
+      var flipBtn = document.getElementById('flipBtn');
+      var nextBtn = document.getElementById('nextBtn');
+      var resetBtn = document.getElementById('resetBtn');
+      var restartBtn = document.getElementById('restartBtn');
+      var flashcard = document.getElementById('flashcard');
+      var frontText = document.getElementById('frontText');
+      var backText = document.getElementById('backText');
+      var countText = document.getElementById('countText');
+      var cardArea = document.getElementById('cardArea');
+      var sessionComplete = document.getElementById('sessionComplete');
+
+      var desiredCount = 10;
+      var currentAlphabet = hiragana;
+      var mode = 'charToRomaji';
+      var deck = [];
+      var currentIndex = 0;
+      var isFlipped = false;
+      var isSessionCompleted = false;
+
+
+
+      function hideFlashcardUI() {
+        cardArea.classList.add('hidden');
+        sessionComplete.classList.add('hidden');
+        optionsPanel.classList.add('hidden');
+        resetBtn.classList.add('hidden');
+      }
+
+      function showHome() {
+        if (homeSection) homeSection.classList.remove('hidden');
+        createSection.classList.add('hidden');
+        translatorSection.classList.add('hidden');
+        pronunciationSection.classList.add('hidden');
+        if (phrasesSection) phrasesSection.classList.add('hidden');
+        const factsSection = document.getElementById('factsSection');
+        if (factsSection) factsSection.classList.add('hidden');
+        hideFlashcardUI();
+        setNavActive('home');
+      }
+
+      function showFlashcards() {
+        if (homeSection) homeSection.classList.add('hidden');
+        translatorSection.classList.add('hidden');
+        pronunciationSection.classList.add('hidden');
+        if (phrasesSection) phrasesSection.classList.add('hidden');
+        const factsSection = document.getElementById('factsSection');
+        if (factsSection) factsSection.classList.add('hidden');
+        createSection.classList.remove('hidden');
+        optionsPanel.classList.add('hidden');
+        cardArea.classList.add('hidden');
+        sessionComplete.classList.add('hidden');
+        setNavActive('flashcards');
+      }
+
+      function showTranslator() {
+        if (homeSection) homeSection.classList.add('hidden');
+        createSection.classList.add('hidden');
+        pronunciationSection.classList.add('hidden');
+        if (phrasesSection) phrasesSection.classList.add('hidden');
+        const factsSection = document.getElementById('factsSection');
+        if (factsSection) factsSection.classList.add('hidden');
+        optionsPanel.classList.add('hidden');
+        cardArea.classList.add('hidden');
+        sessionComplete.classList.add('hidden');
+        translatorSection.classList.remove('hidden');
+        setNavActive('translator');
+      }
+
+      function showPronunciation() {
+        if (homeSection) homeSection.classList.add('hidden');
+        createSection.classList.add('hidden');
+        translatorSection.classList.add('hidden');
+        if (phrasesSection) phrasesSection.classList.add('hidden');
+        const factsSection = document.getElementById('factsSection');
+        if (factsSection) factsSection.classList.add('hidden');
+        optionsPanel.classList.add('hidden');
+        cardArea.classList.add('hidden');
+        sessionComplete.classList.add('hidden');
+        pronunciationSection.classList.remove('hidden');
+        setNavActive('pronunciation');
+      }
+
+      function setActive(el, active) {
+        if (!el) return;
+        if (active) {
+          el.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+          el.classList.add('bg-blue-500', 'text-white', 'shadow');
+        } else {
+          el.classList.remove('bg-blue-500', 'text-white', 'shadow');
+          el.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
         }
+      }
 
-        function showHome(){
-          if (homeSection) homeSection.classList.remove('hidden');
-          createSection.classList.add('hidden');
-          translatorSection.classList.add('hidden');
-          hideFlashcardUI();
-          setNavActive('home');
+      function clearAllActives() {
+        setActive(btnHiragana, false);
+        setActive(btnKatakana, false);
+        setActive(btnCharToRomaji, false);
+        setActive(btnRomajiToChar, false);
+      }
+
+      function updateCount() {
+        countText.textContent = 'Card ' + (currentIndex + 1) + ' of ' + deck.length;
+      }
+
+      function renderCard() {
+        if (!deck.length) return;
+        var card = deck[currentIndex];
+        var front = (mode === 'charToRomaji') ? card.char : card.romaji;
+        var back = (mode === 'charToRomaji') ? card.romaji : card.char;
+        frontText.textContent = front;
+        backText.textContent = back;
+      }
+
+      function resetFlip() {
+        isFlipped = false;
+        flashcard.classList.remove('[transform:rotateY(180deg)]');
+        flipBtn.textContent = 'Show Answer';
+      }
+
+      function buildDeck() {
+        var base = shuffleArray(currentAlphabet);
+        var n = parseInt(desiredCount, 10);
+        if (!isFinite(n) || n < 1) n = 1;
+        if (n > base.length) n = base.length;
+        return base.slice(0, n);
+      }
+
+      function startSession() {
+        // Hide options and create to meet requirement
+        optionsPanel.classList.add('hidden');
+        createSection.classList.add('hidden');
+
+        deck = buildDeck();
+        currentIndex = 0;
+        isSessionCompleted = false;
+        cardArea.classList.remove('hidden');
+        sessionComplete.classList.add('hidden');
+        resetBtn.classList.remove('hidden');
+        resetFlip();
+        renderCard();
+        updateCount();
+        nextBtn.textContent = (deck.length > 1) ? 'Next Card' : 'Finish Session';
+      }
+
+      function finishSession() {
+        isSessionCompleted = true;
+        cardArea.classList.add('hidden');
+        sessionComplete.classList.remove('hidden');
+      }
+
+      function resetToInitial() {
+        // Hide running states
+        cardArea.classList.add('hidden');
+        sessionComplete.classList.add('hidden');
+
+        // Show create input and button, hide options until user clicks create
+        createSection.classList.remove('hidden');
+        createBtn.classList.remove('hidden');
+        optionsPanel.classList.add('hidden');
+
+        // UI resets
+        clearAllActives();
+        currentAlphabet = hiragana;
+        mode = 'charToRomaji';
+        deck = [];
+        currentIndex = 0;
+        isFlipped = false;
+        isSessionCompleted = false;
+        resetBtn.classList.add('hidden');
+        numInput.value = '';
+      }
+
+      // Create button: show options and hide itself
+      createBtn.addEventListener('click', function () {
+        var val = parseInt(numInput.value, 10);
+        if (isFinite(val) && val > 0) {
+          desiredCount = val;
+        } else {
+          desiredCount = 10;
         }
+        createBtn.classList.add('hidden');
+        optionsPanel.classList.remove('hidden');
+      });
 
-        function showFlashcards(){
-          if (homeSection) homeSection.classList.add('hidden');
-          translatorSection.classList.add('hidden');
-          createSection.classList.remove('hidden');
-          optionsPanel.classList.add('hidden');
-          cardArea.classList.add('hidden');
-          sessionComplete.classList.add('hidden');
-          setNavActive('flashcards');
-        }
+      // Navbar navigation
+      if (btnNavHome) {
+        btnNavHome.addEventListener('click', function () {
+          showHome();
+        });
+      }
+      if (btnNavFlashcards) {
+        btnNavFlashcards.addEventListener('click', function () {
+          showFlashcards();
+        });
+      }
+      if (btnNavTranslator) {
+        btnNavTranslator.addEventListener('click', function () {
+          showTranslator();
+        });
+      }
+      if (btnNavPronunciation) {
+        btnNavPronunciation.addEventListener('click', function () {
+          showPronunciation();
+        });
+      }
+      // Event listeners for options; clicking any generates deck with desiredCount
+      btnHiragana.addEventListener('click', function () {
+        currentAlphabet = hiragana;
+        setActive(btnHiragana, true);
+        setActive(btnKatakana, false);
+        startSession();
+      });
 
-        function showTranslator(){
-          if (homeSection) homeSection.classList.add('hidden');
-          createSection.classList.add('hidden');
-          optionsPanel.classList.add('hidden');
-          cardArea.classList.add('hidden');
-          sessionComplete.classList.add('hidden');
-          translatorSection.classList.remove('hidden');
-          setNavActive('translator');
-        }
+      btnKatakana.addEventListener('click', function () {
+        currentAlphabet = katakana;
+        setActive(btnHiragana, false);
+        setActive(btnKatakana, true);
+        startSession();
+      });
 
-        function setActive(el, active){
-          if (!el) return;
-          if (active) {
-            el.classList.remove('bg-white','text-gray-800','hover:bg-gray-100');
-            el.classList.add('bg-blue-500','text-white','shadow');
-          } else {
-            el.classList.remove('bg-blue-500','text-white','shadow');
-            el.classList.add('bg-white','text-gray-800','hover:bg-gray-100');
-          }
-        }
+      btnCharToRomaji.addEventListener('click', function () {
+        mode = 'charToRomaji';
+        setActive(btnCharToRomaji, true);
+        setActive(btnRomajiToChar, false);
+        startSession();
+      });
 
-        function clearAllActives(){
-          setActive(btnHiragana, false);
-          setActive(btnKatakana, false);
-          setActive(btnCharToRomaji, false);
-          setActive(btnRomajiToChar, false);
-        }
+      btnRomajiToChar.addEventListener('click', function () {
+        mode = 'romajiToChar';
+        setActive(btnCharToRomaji, false);
+        setActive(btnRomajiToChar, true);
+        startSession();
+      });
 
-        function updateCount(){
-          countText.textContent = 'Card ' + (currentIndex + 1) + ' of ' + deck.length;
-        }
-
-        function renderCard(){
-          if (!deck.length) return;
-          var card = deck[currentIndex];
-          var front = (mode === 'charToRomaji') ? card.char : card.romaji;
-          var back = (mode === 'charToRomaji') ? card.romaji : card.char;
-          frontText.textContent = front;
-          backText.textContent = back;
-        }
-
-        function resetFlip(){
-          isFlipped = false;
+      // Card controls
+      flipBtn.addEventListener('click', function () {
+        if (isSessionCompleted) return;
+        isFlipped = !isFlipped;
+        if (isFlipped) {
+          flashcard.classList.add('[transform:rotateY(180deg)]');
+          flipBtn.textContent = 'Hide Answer';
+        } else {
           flashcard.classList.remove('[transform:rotateY(180deg)]');
           flipBtn.textContent = 'Show Answer';
         }
+      });
 
-        function buildDeck(){
-          var base = shuffleArray(currentAlphabet);
-          var n = parseInt(desiredCount, 10);
-          if (!isFinite(n) || n < 1) n = 1;
-          if (n > base.length) n = base.length;
-          return base.slice(0, n);
-        }
-
-        function startSession(){
-          // Hide options and create to meet requirement
-          optionsPanel.classList.add('hidden');
-          createSection.classList.add('hidden');
-
-          deck = buildDeck();
-          currentIndex = 0;
-          isSessionCompleted = false;
-          cardArea.classList.remove('hidden');
-          sessionComplete.classList.add('hidden');
-          resetBtn.classList.remove('hidden');
-          resetFlip();
+      nextBtn.addEventListener('click', function () {
+        if (isSessionCompleted) return;
+        resetFlip();
+        if (currentIndex < deck.length - 1) {
+          currentIndex += 1;
           renderCard();
           updateCount();
-          nextBtn.textContent = (deck.length > 1) ? 'Next Card' : 'Finish Session';
+          nextBtn.textContent = (currentIndex < deck.length - 1) ? 'Next Card' : 'Finish Session';
+        } else {
+          finishSession();
         }
+      });
 
-        function finishSession(){
-          isSessionCompleted = true;
-          cardArea.classList.add('hidden');
-          sessionComplete.classList.remove('hidden');
-        }
-
-        function resetToInitial(){
-          // Hide running states
-          cardArea.classList.add('hidden');
-          sessionComplete.classList.add('hidden');
-
-          // Show create input and button, hide options until user clicks create
-          createSection.classList.remove('hidden');
-          createBtn.classList.remove('hidden');
-          optionsPanel.classList.add('hidden');
-
-          // UI resets
-          clearAllActives();
-          currentAlphabet = hiragana;
-          mode = 'charToRomaji';
-          deck = [];
-          currentIndex = 0;
-          isFlipped = false;
-          isSessionCompleted = false;
-          resetBtn.classList.add('hidden');
-          numInput.value = '';
-        }
-
-        // Create button: show options and hide itself
-        createBtn.addEventListener('click', function(){
-          var val = parseInt(numInput.value, 10);
-          if (isFinite(val) && val > 0) {
-            desiredCount = val;
-          } else {
-            desiredCount = 10;
-          }
-          createBtn.classList.add('hidden');
-          optionsPanel.classList.remove('hidden');
+      if (restartBtn) {
+        restartBtn.addEventListener('click', function () {
+          startSession();
         });
+      }
 
-        // Navbar navigation
+      resetBtn.addEventListener('click', function () {
+        resetToInitial();
+      });
+
+      // --- Phrases functionality ---
+      var phrasesSection = document.getElementById('phrasesSection');
+      var btnNavPhrases = document.getElementById('btnNavPhrases');
+      var phrasesContainer = document.getElementById('phrasesContainer');
+      var searchInput = document.getElementById('searchInput');
+      var showAllBtn = document.getElementById('showAllBtn');
+      var showPhrasesBtn = document.getElementById('showPhrasesBtn');
+      var showWordsBtn = document.getElementById('showWordsBtn');
+      var phrasesStats = document.getElementById('phrasesStats');
+      var currentCount = document.getElementById('currentCount');
+      var totalCount = document.getElementById('totalCount');
+
+      var allPhrasesData = [];
+      var currentFilter = 'all';
+      var filteredData = [];
+
+      function updateNavForPhrases() {
+        // Reset all nav buttons
         if (btnNavHome) {
-          btnNavHome.addEventListener('click', function(){
-            showHome();
-          });
+          btnNavHome.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavHome.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
         }
         if (btnNavFlashcards) {
-          btnNavFlashcards.addEventListener('click', function(){
-            showFlashcards();
-          });
+          btnNavFlashcards.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavFlashcards.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
         }
         if (btnNavTranslator) {
-          btnNavTranslator.addEventListener('click', function(){
-            showTranslator();
-          });
+          btnNavTranslator.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavTranslator.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
         }
-        // Event listeners for options; clicking any generates deck with desiredCount
-        btnHiragana.addEventListener('click', function(){
-          currentAlphabet = hiragana;
-          setActive(btnHiragana, true);
-          setActive(btnKatakana, false);
-          startSession();
-        });
+        if (btnNavPronunciation) {
+          btnNavPronunciation.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavPronunciation.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (btnNavPhrases) {
+          btnNavPhrases.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+          btnNavPhrases.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+        }
+      }
 
-        btnKatakana.addEventListener('click', function(){
-          currentAlphabet = katakana;
-          setActive(btnHiragana, false);
-          setActive(btnKatakana, true);
-          startSession();
-        });
+      function showPhrases() {
+        if (homeSection) homeSection.classList.add('hidden');
+        createSection.classList.add('hidden');
+        translatorSection.classList.add('hidden');
+        pronunciationSection.classList.add('hidden');
+        const factsSection = document.getElementById('factsSection');
+        if (factsSection) factsSection.classList.add('hidden');
+        hideFlashcardUI();
+        phrasesSection.classList.remove('hidden');
+        setNavActive('phrases');
+        loadPhrasesData();
+      }
 
-        btnCharToRomaji.addEventListener('click', function(){
-          mode = 'charToRomaji';
-          setActive(btnCharToRomaji, true);
-          setActive(btnRomajiToChar, false);
-          startSession();
-        });
-
-        btnRomajiToChar.addEventListener('click', function(){
-          mode = 'romajiToChar';
-          setActive(btnCharToRomaji, false);
-          setActive(btnRomajiToChar, true);
-          startSession();
-        });
-
-        // Card controls
-        flipBtn.addEventListener('click', function(){
-          if (isSessionCompleted) return;
-          isFlipped = !isFlipped;
-          if (isFlipped) {
-            flashcard.classList.add('[transform:rotateY(180deg)]');
-            flipBtn.textContent = 'Hide Answer';
-          } else {
-            flashcard.classList.remove('[transform:rotateY(180deg)]');
-            flipBtn.textContent = 'Show Answer';
-          }
-        });
-
-        nextBtn.addEventListener('click', function(){
-          if (isSessionCompleted) return;
-          resetFlip();
-          if (currentIndex < deck.length - 1) {
-            currentIndex += 1;
-            renderCard();
-            updateCount();
-            nextBtn.textContent = (currentIndex < deck.length - 1) ? 'Next Card' : 'Finish Session';
-          } else {
-            finishSession();
-          }
-        });
-
-        if (restartBtn) {
-          restartBtn.addEventListener('click', function(){
-            startSession();
-          });
+      async function loadPhrasesData() {
+        if (allPhrasesData.length > 0) {
+          renderPhrases();
+          return;
         }
 
-        resetBtn.addEventListener('click', function(){
-          resetToInitial();
+        try {
+          var response = await fetch(API_BASE + '/api/phrases');
+          var data = await response.json();
+
+          if (data.error) {
+            phrasesContainer.innerHTML = '<div class="text-center py-8 text-red-500">Error loading phrases: ' + data.error + '</div>';
+            return;
+          }
+
+          // Combine phrases and words with type indicator
+          allPhrasesData = [];
+          if (data.phrases) {
+            data.phrases.forEach(function (phrase) {
+              allPhrasesData.push({ ...phrase, type: 'phrase' });
+            });
+          }
+          if (data.words) {
+            data.words.forEach(function (word) {
+              allPhrasesData.push({ ...word, type: 'word' });
+            });
+          }
+
+          renderPhrases();
+        } catch (error) {
+          phrasesContainer.innerHTML = '<div class="text-center py-8 text-red-500">Failed to load phrases. Please check if the server is running.</div>';
+        }
+      }
+
+      function filterData() {
+        var searchTerm = searchInput.value.toLowerCase().trim();
+
+        filteredData = allPhrasesData.filter(function (item) {
+          // Filter by type
+          if (currentFilter === 'phrases' && item.type !== 'phrase') return false;
+          if (currentFilter === 'words' && item.type !== 'word') return false;
+
+          // Filter by search term
+          if (searchTerm) {
+            return item.japanese.toLowerCase().includes(searchTerm) ||
+              item.romaji.toLowerCase().includes(searchTerm) ||
+              item.english.toLowerCase().includes(searchTerm);
+          }
+
+          return true;
+        });
+      }
+
+      function renderPhrases() {
+        filterData();
+
+        if (filteredData.length === 0) {
+          phrasesContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No phrases found matching your criteria.</div>';
+          phrasesStats.classList.add('hidden');
+          return;
+        }
+
+        var html = '';
+        filteredData.forEach(function (item) {
+          var typeColor = item.type === 'phrase' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800';
+          html += '<div class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow">';
+          html += '<div class="flex items-start justify-between mb-2">';
+          html += '<div class="text-2xl font-bold text-gray-800">' + item.japanese + '</div>';
+          html += '<span class="px-2 py-1 rounded-full text-xs font-medium ' + typeColor + '">' + item.type + '</span>';
+          html += '</div>';
+          html += '<div class="text-lg text-indigo-600 mb-1">' + item.romaji + '</div>';
+          html += '<div class="text-gray-700">' + item.english + '</div>';
+          html += '</div>';
         });
 
-        // Initial state: Home visible
-        showHome();
-      })();
-    </script>
+        phrasesContainer.innerHTML = html;
+
+        // Update stats
+        currentCount.textContent = filteredData.length;
+        totalCount.textContent = allPhrasesData.length;
+        phrasesStats.classList.remove('hidden');
+      }
+
+      function setFilterActive(activeBtn) {
+        // Reset all filter buttons
+        showAllBtn.classList.remove('bg-indigo-600', 'text-white');
+        showAllBtn.classList.add('bg-gray-200', 'text-gray-700');
+        showPhrasesBtn.classList.remove('bg-indigo-600', 'text-white');
+        showPhrasesBtn.classList.add('bg-gray-200', 'text-gray-700');
+        showWordsBtn.classList.remove('bg-indigo-600', 'text-white');
+        showWordsBtn.classList.add('bg-gray-200', 'text-gray-700');
+
+        // Set active button
+        activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+        activeBtn.classList.add('bg-indigo-600', 'text-white');
+      }
+
+      // Event listeners for phrases
+      if (btnNavPhrases) {
+        btnNavPhrases.addEventListener('click', showPhrases);
+      }
+
+      // Show Facts section
+      function showFacts() {
+        if (homeSection) homeSection.classList.add('hidden');
+        createSection.classList.add('hidden');
+        translatorSection.classList.add('hidden');
+        pronunciationSection.classList.add('hidden');
+        if (phrasesSection) phrasesSection.classList.add('hidden');
+        const factsSection = document.getElementById('factsSection');
+        if (factsSection) factsSection.classList.remove('hidden');
+        hideFlashcardUI();
+        setNavActive('facts');
+      }
+
+      // Facts filtering functionality
+      function initFactsFiltering() {
+        const allFactsBtn = document.getElementById('allFactsBtn');
+        const geographyBtn = document.getElementById('geographyBtn');
+        const dailyLifeBtn = document.getElementById('dailyLifeBtn');
+        const cultureBtn = document.getElementById('cultureBtn');
+        const traditionsBtn = document.getElementById('traditionsBtn');
+        const factCards = document.querySelectorAll('.fact-card');
+
+        function filterFacts(category) {
+          factCards.forEach(card => {
+            if (category === 'all' || card.classList.contains(category)) {
+              card.style.display = 'block';
+              card.style.animation = 'fadeInUp 0.5s ease-out';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          // Update filter button styles
+          const filterButtons = [allFactsBtn, geographyBtn, dailyLifeBtn, cultureBtn, traditionsBtn];
+          filterButtons.forEach(btn => {
+            if (btn) {
+              btn.className = 'px-6 py-2 bg-gray-200 text-gray-700 rounded-full font-medium hover:bg-gray-300 transition-colors';
+            }
+          });
+
+          // Highlight active filter
+          const activeBtn = category === 'all' ? allFactsBtn :
+            category === 'geography' ? geographyBtn :
+              category === 'daily-life' ? dailyLifeBtn :
+                category === 'culture' ? cultureBtn :
+                  category === 'traditions' ? traditionsBtn : null;
+
+          if (activeBtn) {
+            activeBtn.className = 'px-6 py-2 bg-indigo-600 text-white rounded-full font-medium hover:bg-indigo-700 transition-colors';
+          }
+        }
+
+        // Event listeners for filter buttons
+        if (allFactsBtn) {
+          allFactsBtn.addEventListener('click', () => filterFacts('all'));
+        }
+        if (geographyBtn) {
+          geographyBtn.addEventListener('click', () => filterFacts('geography'));
+        }
+        if (dailyLifeBtn) {
+          dailyLifeBtn.addEventListener('click', () => filterFacts('daily-life'));
+        }
+        if (cultureBtn) {
+          cultureBtn.addEventListener('click', () => filterFacts('culture'));
+        }
+        if (traditionsBtn) {
+          traditionsBtn.addEventListener('click', () => filterFacts('traditions'));
+        }
+
+        // Initialize with all facts visible
+        filterFacts('all');
+      }
+
+      // Event listeners for facts
+      const btnNavFacts = document.getElementById('btnNavFacts');
+      if (btnNavFacts) {
+        btnNavFacts.addEventListener('click', () => {
+          showFacts();
+          // Initialize facts filtering when Facts section is shown
+          setTimeout(initFactsFiltering, 100);
+        });
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          renderPhrases();
+        });
+      }
+
+      if (showAllBtn) {
+        showAllBtn.addEventListener('click', function () {
+          currentFilter = 'all';
+          setFilterActive(showAllBtn);
+          renderPhrases();
+        });
+      }
+
+      if (showPhrasesBtn) {
+        showPhrasesBtn.addEventListener('click', function () {
+          currentFilter = 'phrases';
+          setFilterActive(showPhrasesBtn);
+          renderPhrases();
+        });
+      }
+
+      if (showWordsBtn) {
+        showWordsBtn.addEventListener('click', function () {
+          currentFilter = 'words';
+          setFilterActive(showWordsBtn);
+          renderPhrases();
+        });
+      }
+
+      // Update the setNavActive function to include phrases
+      function setNavActive(target) {
+        // Reset all
+        if (btnNavHome) {
+          btnNavHome.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavHome.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (btnNavFlashcards) {
+          btnNavFlashcards.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavFlashcards.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (btnNavTranslator) {
+          btnNavTranslator.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavTranslator.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (btnNavPronunciation) {
+          btnNavPronunciation.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavPronunciation.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (btnNavPhrases) {
+          btnNavPhrases.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavPhrases.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        const btnNavFacts = document.getElementById('btnNavFacts');
+        if (btnNavFacts) {
+          btnNavFacts.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavFacts.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+
+        if (target === 'home' && btnNavHome) {
+          btnNavHome.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavHome.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (target === 'flashcards' && btnNavFlashcards) {
+          btnNavFlashcards.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavFlashcards.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (target === 'translator' && btnNavTranslator) {
+          btnNavTranslator.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavTranslator.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (target === 'pronunciation' && btnNavPronunciation) {
+          btnNavPronunciation.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavPronunciation.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (target === 'phrases' && btnNavPhrases) {
+          btnNavPhrases.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+          btnNavPhrases.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+        }
+        if (target === 'facts') {
+          const btnNavFacts = document.getElementById('btnNavFacts');
+          if (btnNavFacts) {
+            btnNavFacts.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+            btnNavFacts.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+          }
+        }
+      }
+
+      // Initial state: Home visible
+      showHome();
+    })();
+  </script>
+
+  <!-- Chatling Chatbot -->
+  <script async data-id="7958299315" id="chtl-script" type="text/javascript"
+    src="https://chatling.ai/js/embed.js"></script>
+</body>
+
+</html><s cript async data-id="7958299315" id="chtl-script" type="text/javascript"
+  src="https://chatling.ai/js/embed.js"></script>
   </body>
-</html>
+
+  </html>
