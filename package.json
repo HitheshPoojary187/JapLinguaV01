@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "kuroshiro": "^1.2.0",
-    "kuroshiro-analyzer-kuromoji": "^1.1.0"
+    "kuroshiro-analyzer-kuromoji": "^1.1.0",
+    "multer": "^1.4.5-lts.1"
   }
 }
