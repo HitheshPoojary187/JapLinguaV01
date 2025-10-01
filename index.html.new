@@ -1,0 +1,15 @@
+      function showTranslator() {
+        if (homeSection) homeSection.classList.add('hidden');
+        createSection.classList.add('hidden');
+        pronunciationSection.classList.add('hidden');
+        if (phrasesSection) phrasesSection.classList.add('hidden');
+        const factsSection = document.getElementById('factsSection');
+        if (factsSection) factsSection.classList.add('hidden');
+        const kanjiOCRSection = document.getElementById('kanjiOCRSection');
+        if (kanjiOCRSection) kanjiOCRSection.classList.add('hidden');
+        optionsPanel.classList.add('hidden');
+        cardArea.classList.add('hidden');
+        sessionComplete.classList.add('hidden');
+        translatorSection.classList.remove('hidden');
+        setNavActive('translator');
+      }

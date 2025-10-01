@@ -6,12 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JapLingua-Learning</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://unpkg.com/wanakana@5.0.1/wanakana.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script>
     window.chtlConfig = {
       chatbotId: "7958299315"
     }
   </script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+    .kanji-font {
+      font-family: 'Noto Sans JP', sans-serif;
+    }
     @keyframes petalFall {
       0% {
         transform: translateY(-10%) rotate(0deg);
@@ -38,6 +45,16 @@
       50% {
         transform: scale(1.06);
       }
+    }
+
+    /* KanjiOCR specific styles */
+    .ocr-processing-animation {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
 
     .sakura-petal {
@@ -212,9 +229,9 @@
             class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
             Facts
           </button>
-          <button id="btnNavDummy"
+          <button id="btnNavKanjiOCR"
             class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
-            Dummy
+            KanjiOCR
           </button>
         </nav>
       </header>
@@ -519,10 +536,68 @@
             </div>
           </div>
 
-          <!-- Facts Section -->
-          <div id="dummySection" class="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 hidden">
-            <h2 class="text-3xl font-bold text-center mb-6">Dummy Section</h2>
-            <p class="text-center text-gray-600">This is a dummy section for demonstration purposes.</p>
+          <!-- KanjiOCR Section -->
+          <div id="kanjiOCRSection" class="w-full max-w-6xl hidden">
+            <div class="bg-white shadow-sm border-b border-slate-200 rounded-t-xl mb-8">
+              <div class="px-4 py-6">
+                <div class="flex items-center space-x-3">
+                  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-xl shadow-lg">
+                    <i class="fas fa-language text-white text-xl"></i>
+                  </div>
+                  <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Kanji Extractor</h1>
+                    <p class="text-gray-600 text-sm">Extract and analyze Japanese characters with AI-powered OCR</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Messages container for alerts -->
+            <div id="messages" class="mb-6"></div>
+
+            <!-- Upload Section -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 mb-8">
+              <div class="text-center">
+                <div class="mb-6">
+                  <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full mb-4">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-blue-600"></i>
+                  </div>
+                  <h2 class="text-2xl font-semibold text-gray-900 mb-2">Upload Your Image</h2>
+                  <p class="text-gray-600 mb-6">Select an image containing Japanese text to extract and analyze kanji characters</p>
+                </div>
+                
+                <div class="space-y-4">
+                  <div class="relative">
+                    <input 
+                      type="file" 
+                      id="imageInput" 
+                      accept="image/*" 
+                      class="hidden"
+                    >
+                    <label 
+                      for="imageInput" 
+                      class="cursor-pointer inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 border-2 border-dashed border-slate-300 hover:border-slate-400 rounded-xl transition-all duration-200 text-slate-700 hover:text-slate-800 font-medium min-w-64"
+                    >
+                      <i class="fas fa-image mr-3 text-lg"></i>
+                      <span id="fileLabel">Choose Image File</span>
+                    </label>
+                  </div>
+                  
+                  <button 
+                    type="button"
+                    id="extractBtn"
+                    disabled
+                    class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 min-w-64"
+                  >
+                    <i class="fas fa-magic mr-3"></i>
+                    Extract Kanji
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Output Section -->
+            <div id="output" class="space-y-6"></div>
           </div>
 
           <div id="factsSection" class="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 hidden">
@@ -1184,7 +1259,7 @@
       var btnNavFlashcards = document.getElementById('btnNavFlashcards');
       var btnNavTranslator = document.getElementById('btnNavTranslator');
       var btnNavPronunciation = document.getElementById('btnNavPronunciation');
-      var btnNavDummy = document.getElementById('btnNavDummy');
+      var btnNavKanjiOCR = document.getElementById('btnNavKanjiOCR');
 
       var btnHiragana = document.getElementById('btnHiragana');
       var btnKatakana = document.getElementById('btnKatakana');
@@ -1226,8 +1301,8 @@
         if (phrasesSection) phrasesSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
-        const dummySection = document.getElementById('dummySection');
-        if (dummySection) dummySection.classList.add('hidden');
+        const kanjiOCRSection = document.getElementById('kanjiOCRSection');
+        if (kanjiOCRSection) kanjiOCRSection.classList.add('hidden');
         hideFlashcardUI();
         setNavActive('home');
       }
@@ -1239,8 +1314,8 @@
         if (phrasesSection) phrasesSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
-        const dummySection = document.getElementById('dummySection');
-        if (dummySection) dummySection.classList.add('hidden');
+        const kanjiOCRSection = document.getElementById('kanjiOCRSection');
+        if (kanjiOCRSection) kanjiOCRSection.classList.add('hidden');
         createSection.classList.remove('hidden');
         optionsPanel.classList.add('hidden');
         cardArea.classList.add('hidden');
@@ -1255,8 +1330,8 @@
         if (phrasesSection) phrasesSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
-        const dummySection = document.getElementById('dummySection');
-        if (dummySection) dummySection.classList.add('hidden');
+        const kanjiOCRSection = document.getElementById('kanjiOCRSection');
+        if (kanjiOCRSection) kanjiOCRSection.classList.add('hidden');
         optionsPanel.classList.add('hidden');
         cardArea.classList.add('hidden');
         sessionComplete.classList.add('hidden');
@@ -1271,8 +1346,8 @@
         if (phrasesSection) phrasesSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
-        const dummySection = document.getElementById('dummySection');
-        if (dummySection) dummySection.classList.add('hidden');
+        const kanjiOCRSection = document.getElementById('kanjiOCRSection');
+        if (kanjiOCRSection) kanjiOCRSection.classList.add('hidden');
         optionsPanel.classList.add('hidden');
         cardArea.classList.add('hidden');
         sessionComplete.classList.add('hidden');
@@ -1280,20 +1355,48 @@
         setNavActive('pronunciation');
       }
 
-      function showDummy() {
-        if (homeSection) homeSection.classList.add('hidden');
-        createSection.classList.add('hidden');
-        translatorSection.classList.add('hidden');
-        pronunciationSection.classList.add('hidden');
-        if (phrasesSection) phrasesSection.classList.add('hidden');
-        const factsSection = document.getElementById('factsSection');
-        if (factsSection) factsSection.classList.add('hidden');
-        optionsPanel.classList.add('hidden');
-        cardArea.classList.add('hidden');
-        sessionComplete.classList.add('hidden');
-        const dummySection = document.getElementById('dummySection');
-        if (dummySection) dummySection.classList.remove('hidden');
-        setNavActive('dummy');
+      function showKanjiOCR() {
+        console.log('showKanjiOCR function called');
+        // Hide all other sections
+        const sections = [
+          homeSection,
+          createSection,
+          translatorSection,
+          pronunciationSection,
+          document.getElementById('phrasesSection'),
+          document.getElementById('factsSection'),
+          optionsPanel,
+          cardArea,
+          sessionComplete
+        ];
+
+        sections.forEach(section => {
+          if (section) section.classList.add('hidden');
+        });
+        
+        // Show KanjiOCR section
+        const ocrSection = document.getElementById('kanjiOCRSection');
+        if (ocrSection) {
+          console.log('Showing KanjiOCR section');
+          ocrSection.classList.remove('hidden');
+        } else {
+          console.error('KanjiOCR section not found');
+        }
+        
+        // Set nav active
+        setNavActive('kanjiocr');
+        
+        // Show KanjiOCR section
+        const kanjiOCRSection = document.getElementById('kanjiOCRSection');
+        if (kanjiOCRSection) {
+          console.log('Making KanjiOCR section visible');
+          kanjiOCRSection.classList.remove('hidden');
+        } else {
+          console.error('KanjiOCR section element not found');
+        }
+        
+        // Set nav active
+        setNavActive('kanjiocr');
       }
 
       function setActive(el, active) {
@@ -1531,8 +1634,8 @@
         pronunciationSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
-        const dummySection = document.getElementById('dummySection');
-        if (dummySection) dummySection.classList.add('hidden');
+        const kanjiOCRSection = document.getElementById('kanjiOCRSection');
+        if (kanjiOCRSection) kanjiOCRSection.classList.add('hidden');
         hideFlashcardUI();
         phrasesSection.classList.remove('hidden');
         setNavActive('phrases');
@@ -1642,8 +1745,344 @@
       }
 
       // Event listener for dummy
-      if (btnNavDummy) {
-        btnNavDummy.addEventListener('click', showDummy);
+      if (btnNavKanjiOCR) {
+        btnNavKanjiOCR.addEventListener('click', showKanjiOCR);
+      }
+
+      // KanjiOCR UI Functions
+      function handleFileSelect() {
+        const file = document.getElementById('imageInput').files[0];
+        const fileLabel = document.getElementById('fileLabel');
+        const extractBtn = document.getElementById('extractBtn');
+        
+        if (file) {
+          fileLabel.innerHTML = `<i class="fas fa-check mr-2"></i>${file.name}`;
+          extractBtn.disabled = false;
+          extractBtn.innerHTML = '<i class="fas fa-magic mr-3"></i>Extract Kanji';
+        } else {
+          fileLabel.innerHTML = 'Choose Image File';
+          extractBtn.disabled = true;
+        }
+      }
+
+      function showLoadingState() {
+        const extractBtn = document.getElementById('extractBtn');
+        extractBtn.disabled = true;
+        extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Processing...';
+      }
+
+      function resetButtonState() {
+        const extractBtn = document.getElementById('extractBtn');
+        extractBtn.disabled = false;
+        extractBtn.innerHTML = '<i class="fas fa-magic mr-3"></i>Extract Kanji';
+      }
+
+      function showAlert(message, type = 'error') {
+        const alertClass = type === 'error' ? 'from-red-500 to-red-600' : 'from-green-500 to-green-600';
+        const iconClass = type === 'error' ? 'fa-exclamation-triangle' : 'fa-check-circle';
+        
+        const alertHtml = `
+          <div class="bg-gradient-to-r ${alertClass} text-white p-4 rounded-xl shadow-lg mb-6">
+            <div class="flex items-center">
+              <i class="fas ${iconClass} mr-3 text-lg"></i>
+              <span class="font-medium">${message}</span>
+            </div>
+          </div>
+        `;
+        
+        const messagesContainer = document.getElementById('messages');
+        if (messagesContainer) {
+          messagesContainer.innerHTML = alertHtml + messagesContainer.innerHTML;
+        } else {
+          console.error('Messages container not found');
+        }
+      }
+
+      // KanjiOCR functions
+      function handleFileSelect() {
+        const file = document.getElementById('imageInput').files[0];
+        const fileLabel = document.getElementById('fileLabel');
+        const extractBtn = document.getElementById('extractBtn');
+        
+        if (file) {
+          fileLabel.innerHTML = `<i class="fas fa-check mr-2"></i>${file.name}`;
+          extractBtn.disabled = false;
+          extractBtn.innerHTML = '<i class="fas fa-magic mr-3"></i>Extract Kanji';
+        } else {
+          fileLabel.innerHTML = 'Choose Image File';
+          extractBtn.disabled = true;
+        }
+      }
+
+      function showLoadingState() {
+        const extractBtn = document.getElementById('extractBtn');
+        extractBtn.disabled = true;
+        extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Processing...';
+      }
+
+      function resetButtonState() {
+        const extractBtn = document.getElementById('extractBtn');
+        extractBtn.disabled = false;
+        extractBtn.innerHTML = '<i class="fas fa-magic mr-3"></i>Extract Kanji';
+      }
+
+      async function processImage() {
+        console.log('processImage function called');
+        const fileInput = document.getElementById('imageInput');
+        const file = fileInput && fileInput.files && fileInput.files[0];
+        console.log('Selected file:', file);
+        
+        if (!file) {
+          showAlert("Please upload an image first!");
+          return;
+        }
+
+        showLoadingState();
+
+        // Make sure output container exists
+        let outputContainer = document.getElementById("output");
+        if (!outputContainer) {
+          console.log('Creating output container');
+          outputContainer = document.createElement('div');
+          outputContainer.id = 'output';
+          outputContainer.className = 'space-y-6';
+          document.getElementById('kanjiOCRSection').appendChild(outputContainer);
+        }
+
+        // Show processing status
+        document.getElementById("output").innerHTML = `
+          <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full mb-4">
+              <i class="fas fa-cog fa-spin text-2xl text-blue-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Processing Image</h3>
+            <p class="text-gray-600">Extracting text using AI-powered OCR...</p>
+            <div class="mt-4">
+              <div class="bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        try {
+          // First upload the image to our server
+          const formData = new FormData();
+          formData.append('image', file);
+          
+          const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+            ? 'http://localhost:5000/upload-image' 
+            : '/upload-image';
+
+          console.log('Uploading image to:', apiUrl);
+          const uploadResponse = await fetch(apiUrl, {
+            method: 'POST',
+            body: formData
+          });
+          const uploadData = await uploadResponse.json();
+          if (uploadData.error) {
+            console.error('Upload error:', uploadData.error);
+            throw new Error(uploadData.error);
+          }
+          console.log('Upload successful:', uploadData);
+
+          // OCR using Tesseract
+          const { data: { text } } = await Tesseract.recognize(file, 'jpn');
+          console.log('Extracted text:', text);
+          
+          // Translate the extracted text
+          let translationData = null;
+          if (text && text.trim()) {
+            try {
+              translationData = await translateText(text, 'japanese');
+              console.log('Translation data:', translationData);
+            } catch (e) {
+              console.error('Translation failed:', e);
+            }
+          }
+          
+          // Show extracted text with translation
+          let translationHtml = '';
+          if (translationData) {
+            translationHtml = `
+              <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h4 class="text-sm font-semibold text-blue-800 mb-2 flex items-center">
+                  <i class="fas fa-language mr-2"></i>
+                  Translation
+                </h4>
+                <div class="space-y-2">
+                  <div>
+                    <span class="text-xs text-blue-600 font-medium">Romanji:</span>
+                    <p class="text-blue-800">${translationData.romanized || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <span class="text-xs text-blue-600 font-medium">English:</span>
+                    <p class="text-blue-800">${translationData.translated || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          
+          document.getElementById("output").innerHTML = `
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
+              <div class="flex items-center mb-4">
+                <div class="bg-gradient-to-r from-green-100 to-emerald-100 p-2 rounded-lg mr-3">
+                  <i class="fas fa-file-text text-green-600 text-lg"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900">Extracted Text</h3>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-4 kanji-font">
+                <p class="text-gray-800 text-lg leading-relaxed">${text || 'No text extracted'}</p>
+                ${translationHtml}
+              </div>
+            </div>
+          `;
+
+          // Extract unique Kanji
+          const kanjis = [...new Set(text.match(/[\u4e00-\u9faf]/g))];
+          if (!kanjis || kanjis.length === 0) {
+            document.getElementById("output").innerHTML += `
+              <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
+                <div class="text-center">
+                  <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-full mb-4">
+                    <i class="fas fa-search text-2xl text-yellow-600"></i>
+                  </div>
+                  <h3 class="text-xl font-semibold text-gray-900 mb-2">No Kanji Found</h3>
+                  <p class="text-gray-600">The image doesn't seem to contain any Japanese kanji characters.</p>
+                </div>
+              </div>
+            `;
+            resetButtonState();
+            return;
+          }
+
+          // Show kanji count and start processing
+          document.getElementById("output").innerHTML += `
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                  <div class="bg-gradient-to-r from-purple-100 to-violet-100 p-2 rounded-lg mr-3">
+                    <i class="fas fa-language text-purple-600 text-lg"></i>
+                  </div>
+                  <h3 class="text-xl font-semibold text-gray-900">Kanji Analysis</h3>
+                </div>
+                <span class="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                  ${kanjis.length} character${kanjis.length !== 1 ? 's' : ''} found
+                </span>
+              </div>
+              <div class="grid grid-cols-1 gap-4" id="kanjiResults">
+                <!-- Kanji cards will be inserted here -->
+              </div>
+            </div>
+          `;
+
+          const kanjiResults = document.getElementById('kanjiResults');
+          
+          // Fetch Kanji details
+          for (const kanji of kanjis) {
+            try {
+              const res = await fetch(`https://kanjiapi.dev/v1/kanji/${encodeURIComponent(kanji)}`);
+              if (!res.ok) continue;
+              const data = await res.json();
+
+              // Convert readings to Romaji
+              const onRomaji = data.on_readings.map(r => window.wanakana.toRomaji(r));
+              const kunRomaji = data.kun_readings.map(r => window.wanakana.toRomaji(r));
+
+              const gradeDisplay = data.grade ? `Grade ${data.grade}` : 'Advanced';
+              const gradeColor = data.grade && data.grade <= 6 ? 'text-green-600 bg-green-100' : 'text-purple-600 bg-purple-100';
+
+              kanjiResults.innerHTML += `
+                <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 border border-slate-200 hover:shadow-lg transition-all duration-200">
+                  <div class="flex items-start justify-between mb-4">
+                    <div class="kanji-font text-4xl font-bold text-gray-900 bg-white p-3 rounded-xl shadow-sm">
+                      ${data.kanji}
+                    </div>
+                    <div class="flex space-x-2">
+                      <span class="${gradeColor} px-2 py-1 rounded-full text-xs font-medium">
+                        ${gradeDisplay}
+                      </span>
+                      <span class="text-slate-600 bg-slate-100 px-2 py-1 rounded-full text-xs font-medium">
+                        ${data.stroke_count} strokes
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="space-y-3">
+                    <div class="bg-white rounded-lg p-3">
+                      <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                        <i class="fas fa-globe-americas mr-2 text-blue-500"></i>
+                        Meanings
+                      </h4>
+                      <p class="text-gray-800 font-medium">${data.meanings.join(', ')}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div class="bg-white rounded-lg p-3">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                          <i class="fas fa-yin-yang mr-2 text-red-500"></i>
+                          On'yomi
+                        </h4>
+                        <p class="kanji-font text-gray-800 mb-1">${data.on_readings.join(', ') || "N/A"}</p>
+                        <p class="text-sm text-gray-600 italic">${onRomaji.join(', ') || "N/A"}</p>
+                      </div>
+                      
+                      <div class="bg-white rounded-lg p-3">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                          <i class="fas fa-yin-yang mr-2 text-indigo-500"></i>
+                          Kun'yomi
+                        </h4>
+                        <p class="kanji-font text-gray-800 mb-1">${data.kun_readings.join(', ') || "N/A"}</p>
+                        <p class="text-sm text-gray-600 italic">${kunRomaji.join(', ') || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            } catch (err) {
+              console.error('Error processing kanji:', kanji, err);
+            }
+          }
+          
+          resetButtonState();
+          
+        } catch (err) {
+          console.error('OCR Error:', err);
+          showAlert('Failed to process the image. Please try again with a clearer image.');
+          resetButtonState();
+        }
+      }
+
+      // Initialize event listeners
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize KanjiOCR functionality
+        initializeKanjiOCR();
+      });
+
+      function initializeKanjiOCR() {
+        console.log('Initializing KanjiOCR functionality');
+        const imageInput = document.getElementById('imageInput');
+        const extractBtn = document.getElementById('extractBtn');
+        const messagesContainer = document.getElementById('messages');
+        
+        if (!messagesContainer) {
+          console.error('Messages container not found');
+        }
+        
+        if (imageInput) {
+          console.log('Adding file input event listener');
+          imageInput.addEventListener('change', handleFileSelect);
+        } else {
+          console.error('Image input not found');
+        }
+        
+        if (extractBtn) {
+          console.log('Adding extract button event listener');
+          extractBtn.addEventListener('click', processImage);
+        } else {
+          console.error('Extract button not found');
+        }
       }
 
       // Show Facts section
@@ -1653,8 +2092,8 @@
         translatorSection.classList.add('hidden');
         pronunciationSection.classList.add('hidden');
         if (phrasesSection) phrasesSection.classList.add('hidden');
-        const dummySection = document.getElementById('dummySection');
-        if (dummySection) dummySection.classList.add('hidden');
+        const kanjiOCRSection = document.getElementById('kanjiOCRSection');
+        if (kanjiOCRSection) kanjiOCRSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.remove('hidden');
         hideFlashcardUI();
