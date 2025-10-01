@@ -212,6 +212,10 @@
             class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
             Facts
           </button>
+          <button id="btnNavDummy"
+            class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
+            Dummy
+          </button>
         </nav>
       </header>
 
@@ -516,6 +520,11 @@
           </div>
 
           <!-- Facts Section -->
+          <div id="dummySection" class="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 hidden">
+            <h2 class="text-3xl font-bold text-center mb-6">Dummy Section</h2>
+            <p class="text-center text-gray-600">This is a dummy section for demonstration purposes.</p>
+          </div>
+
           <div id="factsSection" class="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 hidden">
             <div class="mb-8 text-center">
               <h2 class="text-3xl font-bold text-indigo-700 mb-2">Fascinating Japan Facts</h2>
@@ -1175,6 +1184,7 @@
       var btnNavFlashcards = document.getElementById('btnNavFlashcards');
       var btnNavTranslator = document.getElementById('btnNavTranslator');
       var btnNavPronunciation = document.getElementById('btnNavPronunciation');
+      var btnNavDummy = document.getElementById('btnNavDummy');
 
       var btnHiragana = document.getElementById('btnHiragana');
       var btnKatakana = document.getElementById('btnKatakana');
@@ -1216,6 +1226,8 @@
         if (phrasesSection) phrasesSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
+        const dummySection = document.getElementById('dummySection');
+        if (dummySection) dummySection.classList.add('hidden');
         hideFlashcardUI();
         setNavActive('home');
       }
@@ -1227,6 +1239,8 @@
         if (phrasesSection) phrasesSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
+        const dummySection = document.getElementById('dummySection');
+        if (dummySection) dummySection.classList.add('hidden');
         createSection.classList.remove('hidden');
         optionsPanel.classList.add('hidden');
         cardArea.classList.add('hidden');
@@ -1241,6 +1255,8 @@
         if (phrasesSection) phrasesSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
+        const dummySection = document.getElementById('dummySection');
+        if (dummySection) dummySection.classList.add('hidden');
         optionsPanel.classList.add('hidden');
         cardArea.classList.add('hidden');
         sessionComplete.classList.add('hidden');
@@ -1255,11 +1271,29 @@
         if (phrasesSection) phrasesSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
+        const dummySection = document.getElementById('dummySection');
+        if (dummySection) dummySection.classList.add('hidden');
         optionsPanel.classList.add('hidden');
         cardArea.classList.add('hidden');
         sessionComplete.classList.add('hidden');
         pronunciationSection.classList.remove('hidden');
         setNavActive('pronunciation');
+      }
+
+      function showDummy() {
+        if (homeSection) homeSection.classList.add('hidden');
+        createSection.classList.add('hidden');
+        translatorSection.classList.add('hidden');
+        pronunciationSection.classList.add('hidden');
+        if (phrasesSection) phrasesSection.classList.add('hidden');
+        const factsSection = document.getElementById('factsSection');
+        if (factsSection) factsSection.classList.add('hidden');
+        optionsPanel.classList.add('hidden');
+        cardArea.classList.add('hidden');
+        sessionComplete.classList.add('hidden');
+        const dummySection = document.getElementById('dummySection');
+        if (dummySection) dummySection.classList.remove('hidden');
+        setNavActive('dummy');
       }
 
       function setActive(el, active) {
@@ -1497,6 +1531,8 @@
         pronunciationSection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.add('hidden');
+        const dummySection = document.getElementById('dummySection');
+        if (dummySection) dummySection.classList.add('hidden');
         hideFlashcardUI();
         phrasesSection.classList.remove('hidden');
         setNavActive('phrases');
@@ -1605,6 +1641,11 @@
         btnNavPhrases.addEventListener('click', showPhrases);
       }
 
+      // Event listener for dummy
+      if (btnNavDummy) {
+        btnNavDummy.addEventListener('click', showDummy);
+      }
+
       // Show Facts section
       function showFacts() {
         if (homeSection) homeSection.classList.add('hidden');
@@ -1612,6 +1653,8 @@
         translatorSection.classList.add('hidden');
         pronunciationSection.classList.add('hidden');
         if (phrasesSection) phrasesSection.classList.add('hidden');
+        const dummySection = document.getElementById('dummySection');
+        if (dummySection) dummySection.classList.add('hidden');
         const factsSection = document.getElementById('factsSection');
         if (factsSection) factsSection.classList.remove('hidden');
         hideFlashcardUI();
