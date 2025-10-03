@@ -129,6 +129,7 @@
       z-index: 10;
       background: white;
       border: 2px solid rgb(59 130 246);
+      transition: all 0.2s ease;
     }
 
     #cropBox:hover {
@@ -139,11 +140,61 @@
       background: rgb(59 130 246);
     }
 
-    /* Camera interface styles */
-    #cameraVideo {
-      transform: scaleX(-1);
-      /* Mirror effect for front camera */
+    /* Mobile-friendly resize handles */
+    @media (max-width: 768px) {
+      #cropBox>div {
+        width: 20px !important;
+        height: 20px !important;
+        margin: -10px 0 0 -10px;
+      }
+
+      #cropBox>div[data-handle="nw"] {
+        top: -10px !important;
+        left: -10px !important;
+      }
+
+      #cropBox>div[data-handle="n"] {
+        top: -10px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+      }
+
+      #cropBox>div[data-handle="ne"] {
+        top: -10px !important;
+        right: -10px !important;
+      }
+
+      #cropBox>div[data-handle="e"] {
+        top: 50% !important;
+        right: -10px !important;
+        transform: translateY(-50%) !important;
+      }
+
+      #cropBox>div[data-handle="se"] {
+        bottom: -10px !important;
+        right: -10px !important;
+      }
+
+      #cropBox>div[data-handle="s"] {
+        bottom: -10px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+      }
+
+      #cropBox>div[data-handle="sw"] {
+        bottom: -10px !important;
+        left: -10px !important;
+      }
+
+      #cropBox>div[data-handle="w"] {
+        top: 50% !important;
+        left: -10px !important;
+        transform: translateY(-50%) !important;
+      }
     }
+
+    /* Camera interface styles */
+    /* Mirror effect removed - camera will show normal orientation */
 
     /* Progress step styles */
     .step-active {
@@ -741,11 +792,19 @@
                   <path
                     d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 </svg>
-                <span><span class="font-semibold">Troubleshooting:</span> If pronunciation doesn't work, check browser
-                  settings or use "Test Voices" to see available options.</span>
+                <span><span class="font-semibold">Voice Selection:</span> Choose your preferred Japanese voice from the
+                  dropdown above, then use "Test Voices" to hear a sample.</span>
               </div>
             </div>
             <div class="space-y-4">
+              <div>
+                <label for="voiceSelect" class="block text-sm font-medium text-gray-600 mb-2">Select Japanese
+                  Voice</label>
+                <select id="voiceSelect"
+                  class="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors mb-4">
+                  <option value="">Loading voices...</option>
+                </select>
+              </div>
               <div>
                 <label for="romanjiInput" class="block text-sm font-medium text-gray-600 mb-2">Romanji Text</label>
                 <input type="text" id="romanjiInput"
@@ -1010,19 +1069,19 @@
                   </div>
                 </div>
 
-                <div class="flex justify-center space-x-4 mt-6">
+                <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-6">
                   <button id="confirmCropBtn"
-                    class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    class="w-full sm:w-auto px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
                     <i class="fas fa-check mr-2"></i>
                     Confirm Crop
                   </button>
                   <button id="cancelCropBtn"
-                    class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    class="w-full sm:w-auto px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
                     <i class="fas fa-times mr-2"></i>
                     Cancel
                   </button>
                   <button id="resetCropBtn"
-                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
                     <i class="fas fa-undo mr-2"></i>
                     Reset Selection
                   </button>
@@ -1031,12 +1090,12 @@
                 <!-- Crop Instructions -->
                 <div class="mt-4 bg-blue-50 rounded-lg p-4 border border-blue-200">
                   <div class="flex items-start space-x-3">
-                    <i class="fas fa-mouse-pointer text-blue-600 mt-0.5"></i>
+                    <i class="fas fa-hand-pointer text-blue-600 mt-0.5"></i>
                     <div class="text-sm text-blue-800">
                       <p class="font-medium mb-1">How to crop:</p>
                       <ul class="list-disc list-inside space-y-1 text-blue-700">
                         <li>Drag the selection box to move it around</li>
-                        <li>Drag the corner and edge handles to resize</li>
+                        <li>Drag the corner and edge handles to resize (larger handles on mobile)</li>
                         <li>Make sure to include all the text you want to extract</li>
                       </ul>
                     </div>
@@ -1761,6 +1820,7 @@
       var elJapaneseOutput = document.getElementById('japaneseOutput');
       var elJapaneseText = document.getElementById('japaneseText');
       var elPronunciationStatus = document.getElementById('pronunciationStatus');
+      var elVoiceSelect = document.getElementById('voiceSelect');
 
       async function speakJapanese() {
         try {
@@ -1798,21 +1858,38 @@
           const voices = speechSynthesis.getVoices();
           console.log('Available voices:', voices.length);
 
-          // Find Japanese voice
-          const japaneseVoice = voices.find(voice =>
-            voice.lang.startsWith('ja') ||
-            voice.name.toLowerCase().includes('japanese') ||
-            voice.name.toLowerCase().includes('japan')
-          );
+          // Get selected voice from dropdown
+          let selectedVoice = null;
+          if (elVoiceSelect && elVoiceSelect.value !== '') {
+            const japaneseVoices = voices.filter(voice =>
+              voice.lang.startsWith('ja') ||
+              voice.name.toLowerCase().includes('japanese') ||
+              voice.name.toLowerCase().includes('japan')
+            );
 
-          console.log('Japanese voice found:', japaneseVoice ? japaneseVoice.name : 'None');
+            const selectedIndex = parseInt(elVoiceSelect.value);
+            if (selectedIndex >= 0 && selectedIndex < japaneseVoices.length) {
+              selectedVoice = japaneseVoices[selectedIndex];
+            }
+          }
+
+          // Fallback: Find any Japanese voice if none selected
+          if (!selectedVoice) {
+            selectedVoice = voices.find(voice =>
+              voice.lang.startsWith('ja') ||
+              voice.name.toLowerCase().includes('japanese') ||
+              voice.name.toLowerCase().includes('japan')
+            );
+          }
+
+          console.log('Selected voice:', selectedVoice ? selectedVoice.name : 'None');
 
           // Create utterance
           var utterance = new SpeechSynthesisUtterance(japaneseWord);
 
           // Set voice and language
-          if (japaneseVoice) {
-            utterance.voice = japaneseVoice;
+          if (selectedVoice) {
+            utterance.voice = selectedVoice;
           }
           utterance.lang = 'ja-JP';
           utterance.rate = 0.7; // Slower for learning
@@ -1864,14 +1941,70 @@
           };
 
           speechSynthesis.addEventListener('voiceschanged', voicesChangedHandler);
-
-          // Fallback timeout
-          setTimeout(resolve, 1000);
         });
+      }
+
+      // Function to populate voice selector with Japanese voices
+      async function populateVoiceSelector() {
+        if (!elVoiceSelect) return;
+
+        try {
+          await waitForVoices();
+          const voices = speechSynthesis.getVoices();
+
+          // Filter for Japanese voices
+          const japaneseVoices = voices.filter(voice =>
+            voice.lang.startsWith('ja') ||
+            voice.name.toLowerCase().includes('japanese') ||
+            voice.name.toLowerCase().includes('japan')
+          );
+
+          // Clear existing options
+          elVoiceSelect.innerHTML = '';
+
+          if (japaneseVoices.length > 0) {
+            // Add Japanese voices
+            japaneseVoices.forEach((voice, index) => {
+              const option = document.createElement('option');
+              option.value = index;
+              option.textContent = `${voice.name} (${voice.lang})${voice.default ? ' [Default]' : ''}`;
+              option.dataset.voiceName = voice.name;
+              option.dataset.voiceLang = voice.lang;
+              elVoiceSelect.appendChild(option);
+            });
+
+            // Select the first Japanese voice by default
+            elVoiceSelect.selectedIndex = 0;
+
+            if (elPronunciationStatus) {
+              elPronunciationStatus.textContent = `${japaneseVoices.length} Japanese voice(s) available`;
+            }
+          } else {
+            // No Japanese voices found, show all voices as fallback
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'No Japanese voices found - using system default';
+            elVoiceSelect.appendChild(option);
+
+            if (elPronunciationStatus) {
+              elPronunciationStatus.textContent = 'No Japanese voices available';
+            }
+          }
+        } catch (error) {
+          console.error('Error populating voice selector:', error);
+          elVoiceSelect.innerHTML = '<option value="">Error loading voices</option>';
+        }
       }
 
       if (elSpeakBtn) elSpeakBtn.addEventListener('click', speakJapanese);
       if (elRomanjiInput) elRomanjiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') speakJapanese(); });
+
+      // Initialize voice selector when page loads
+      if (elVoiceSelect) {
+        populateVoiceSelector();
+        // Also repopulate when voices change (some browsers load voices asynchronously)
+        speechSynthesis.addEventListener('voiceschanged', populateVoiceSelector);
+      }
 
       // Test voices functionality
       const testVoicesBtn = document.getElementById('testVoicesBtn');
@@ -1886,8 +2019,6 @@
             await waitForVoices();
             const voices = speechSynthesis.getVoices();
 
-            let voiceInfo = `Available voices (${voices.length} total):\n\n`;
-
             const japaneseVoices = voices.filter(voice =>
               voice.lang.startsWith('ja') ||
               voice.name.toLowerCase().includes('japanese') ||
@@ -1895,24 +2026,25 @@
             );
 
             if (japaneseVoices.length > 0) {
-              voiceInfo += 'Japanese voices:\n';
-              japaneseVoices.forEach(voice => {
-                voiceInfo += `- ${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}\n`;
-              });
-            } else {
-              voiceInfo += 'No Japanese voices found.\n';
-              voiceInfo += '\nAll available voices:\n';
-              voices.slice(0, 10).forEach(voice => {
-                voiceInfo += `- ${voice.name} (${voice.lang})\n`;
-              });
-              if (voices.length > 10) {
-                voiceInfo += `... and ${voices.length - 10} more\n`;
+              // Test the currently selected voice
+              const selectedIndex = elVoiceSelect ? parseInt(elVoiceSelect.value) : 0;
+              const testVoice = japaneseVoices[selectedIndex] || japaneseVoices[0];
+
+              const testText = 'こんにちは'; // "Hello" in Japanese
+              const utterance = new SpeechSynthesisUtterance(testText);
+              utterance.voice = testVoice;
+              utterance.lang = 'ja-JP';
+              utterance.rate = 0.7;
+
+              speechSynthesis.cancel(); // Stop any ongoing speech
+              speechSynthesis.speak(utterance);
+
+              if (elPronunciationStatus) {
+                elPronunciationStatus.textContent = `Testing voice: ${testVoice.name}`;
               }
+            } else {
+              alert('No Japanese voices available on this system.\n\nTo get Japanese voices:\n- Windows: Go to Settings > Time & Language > Speech\n- Mac: Go to System Preferences > Accessibility > Speech\n- Chrome: May use online voices if available');
             }
-
-            voiceInfo += '\nNote: If no Japanese voices are available, the system will use the default voice which may not pronounce Japanese correctly.';
-
-            alert(voiceInfo);
           } catch (error) {
             alert('Error testing voices: ' + error.message);
           }
@@ -2865,13 +2997,26 @@
         console.log('Found resize handles:', handles.length);
 
         handles.forEach((handle) => {
+          // Mouse events for desktop
           handle.addEventListener('mousedown', (e) => {
             console.log('Handle clicked:', handle.dataset.handle);
             startCropResize(e, handle.dataset.handle);
           });
+
+          // Touch events for mobile
+          handle.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            console.log('Handle touched:', handle.dataset.handle);
+            const touch = e.touches[0];
+            startCropResize({
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+              preventDefault: () => { }
+            }, handle.dataset.handle);
+          });
         });
 
-        // Touch events for mobile
+        // Touch events for mobile crop box movement
         cropBox.addEventListener('touchstart', startCropDragTouch);
         document.addEventListener('touchmove', handleCropDragTouch);
         document.addEventListener('touchend', endCropDrag);
@@ -2927,11 +3072,15 @@
 
         const touch = e.touches[0];
         const cropBox = document.getElementById('cropBox');
+        if (!cropBox) return;
+
         const deltaX = touch.clientX - cropState.dragStart.x;
         const deltaY = touch.clientY - cropState.dragStart.y;
 
         if (cropState.isDragging) {
           moveCropBox(cropBox, deltaX, deltaY);
+        } else if (cropState.isResizing) {
+          resizeCropBox(cropBox, deltaX, deltaY, cropState.resizeHandle);
         }
 
         cropState.dragStart = { x: touch.clientX, y: touch.clientY };
@@ -3102,38 +3251,57 @@
       }
 
       function createCroppedImage() {
+        console.log('Creating cropped image with data:', workflowState.cropData);
+
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         const cropImage = document.getElementById('cropImage');
 
+        if (!cropImage) {
+          console.error('Crop image element not found');
+          showAlert('Crop image not found. Please try again.');
+          return;
+        }
+
         canvas.width = workflowState.cropData.width;
         canvas.height = workflowState.cropData.height;
 
-        // Draw the cropped portion
-        context.drawImage(
-          cropImage,
-          workflowState.cropData.x,
-          workflowState.cropData.y,
-          workflowState.cropData.width,
-          workflowState.cropData.height,
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        );
+        console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
 
-        // Convert to blob
-        canvas.toBlob((blob) => {
-          if (blob) {
-            workflowState.croppedImage = blob;
-            workflowState.currentStep = 'processing';
+        try {
+          // Draw the cropped portion
+          context.drawImage(
+            cropImage,
+            workflowState.cropData.x,
+            workflowState.cropData.y,
+            workflowState.cropData.width,
+            workflowState.cropData.height,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
 
-            showAlert('Image cropped successfully', 'success');
-            processImage(blob);
-          } else {
-            showAlert('Failed to create cropped image. Please try again.');
-          }
-        }, 'image/jpeg', 0.9);
+          console.log('Image drawn to canvas successfully');
+
+          // Convert to blob
+          canvas.toBlob((blob) => {
+            if (blob) {
+              console.log('Blob created successfully, size:', blob.size);
+              workflowState.croppedImage = blob;
+              workflowState.currentStep = 'processing';
+
+              showAlert('Image cropped successfully', 'success');
+              processImage(blob);
+            } else {
+              console.error('Failed to create blob from canvas');
+              showAlert('Failed to create cropped image. Please try again.');
+            }
+          }, 'image/jpeg', 0.9);
+        } catch (error) {
+          console.error('Error creating cropped image:', error);
+          showAlert('Failed to crop image. Please try again.');
+        }
       }
 
       function cancelCrop() {
@@ -3228,7 +3396,25 @@
         const imageToProcess = imageBlob || workflowState.croppedImage || workflowState.selectedImage;
 
         if (!imageToProcess) {
+          console.error('No image available for processing');
           showAlert("No image available for processing!");
+          return;
+        }
+
+        console.log('Image to process:', imageToProcess);
+        console.log('Image type:', imageToProcess.type);
+        console.log('Image size:', imageToProcess.size);
+
+        // Validate image
+        if (imageToProcess.size === 0) {
+          console.error('Image file is empty');
+          showAlert('Image file is empty. Please try again with a valid image.');
+          return;
+        }
+
+        if (imageToProcess.size > 10 * 1024 * 1024) { // 10MB limit
+          console.error('Image file too large:', imageToProcess.size);
+          showAlert('Image file is too large. Please use an image smaller than 10MB.');
           return;
         }
 
@@ -3237,38 +3423,61 @@
         workflowState.isLoading = true;
 
         // Show processing interface
+        console.log('Showing processing interface...');
         showInterface('processingInterface');
+
+        // Verify the interface is shown
+        const processingInterface = document.getElementById('processingInterface');
+        if (processingInterface && processingInterface.classList.contains('hidden')) {
+          console.error('Processing interface failed to show');
+          showAlert('Interface error. Please refresh the page and try again.');
+          return;
+        }
+        console.log('Processing interface shown successfully');
 
         // Update progress
         updateProcessingProgress(10, 'Uploading image...');
 
         try {
-          // First upload the image to our server
-          const formData = new FormData();
-          formData.append('image', imageToProcess);
+          // Skip server upload and go directly to OCR
+          updateProcessingProgress(30, 'Preparing image for OCR...');
+          console.log('Skipping server upload, processing directly with Tesseract');
 
-          const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'http://localhost:5000/upload-image'
-            : '/upload-image';
+          // OCR using Tesseract with timeout
+          updateProcessingProgress(50, 'Extracting text with AI...');
+          console.log('Starting Tesseract OCR...');
 
-          console.log('Uploading image to:', apiUrl);
-          const uploadResponse = await fetch(apiUrl, {
-            method: 'POST',
-            body: formData
+          // Check if Tesseract is available
+          if (typeof Tesseract === 'undefined') {
+            throw new Error('Tesseract OCR library not loaded. Please refresh the page and try again.');
+          }
+
+          // Create a timeout promise (increased to 90 seconds for better reliability)
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('OCR processing timed out after 90 seconds')), 90000);
           });
 
-          updateProcessingProgress(30, 'Image uploaded, starting OCR...');
+          // Create OCR promise with better error handling
+          const ocrPromise = Tesseract.recognize(imageToProcess, 'jpn', {
+            logger: m => {
+              console.log('Tesseract progress:', m);
+              if (m.status === 'recognizing text') {
+                const progress = Math.round(m.progress * 100);
+                updateProcessingProgress(50 + (m.progress * 30), `Extracting text... ${progress}%`);
+              } else if (m.status) {
+                updateProcessingProgress(50, `OCR Status: ${m.status}`);
+              }
+            }
+          }).catch(error => {
+            console.error('Tesseract OCR error:', error);
+            throw new Error(`OCR processing failed: ${error.message}`);
+          });
 
-          const uploadData = await uploadResponse.json();
-          if (uploadData.error) {
-            console.error('Upload error:', uploadData.error);
-            throw new Error(uploadData.error);
-          }
-          console.log('Upload successful:', uploadData);
+          // Race between OCR and timeout
+          console.log('Starting OCR processing...');
+          const ocrResult = await Promise.race([ocrPromise, timeoutPromise]);
 
-          // OCR using Tesseract
-          updateProcessingProgress(50, 'Extracting text with AI...');
-          const { data: { text } } = await Tesseract.recognize(imageToProcess, 'jpn');
+          const text = ocrResult.data.text;
           console.log('Extracted text:', text);
 
           updateProcessingProgress(70, 'Translating text...');
@@ -3310,26 +3519,57 @@
 
         } catch (err) {
           console.error('OCR Error:', err);
+          console.error('Error stack:', err.stack);
+
           workflowState.error = err.message;
           workflowState.currentStep = 'error';
           workflowState.isLoading = false;
 
-          showAlert('Failed to process the image. Please try again with a clearer image.');
-          resetWorkflow();
+          // More specific error messages
+          let errorMessage = 'Failed to process the image. ';
+          if (err.message.includes('timed out')) {
+            errorMessage += 'Processing took too long - please try with a smaller or clearer image.';
+          } else if (err.message.includes('Tesseract') || err.message.includes('OCR')) {
+            errorMessage += 'OCR processing failed - please try with a clearer image with better contrast.';
+          } else if (err.message.includes('not loaded')) {
+            errorMessage += 'OCR library not loaded - please refresh the page and try again.';
+          } else if (err.message.includes('fetch') || err.message.includes('network')) {
+            errorMessage += 'Network error - please check your connection.';
+          } else {
+            errorMessage += 'Please try again with a clearer image or refresh the page.';
+          }
+
+          showAlert(errorMessage);
+
+          // Reset progress bar
+          updateProcessingProgress(0, 'Processing failed');
+
+          // Return to cropping interface after a delay
+          setTimeout(() => {
+            workflowState.currentStep = 'cropping';
+            workflowState.isLoading = false;
+            showInterface('croppingInterface');
+          }, 3000);
         }
       }
 
       // Update Processing Progress
       function updateProcessingProgress(percentage, status) {
+        console.log(`Progress: ${percentage}% - ${status}`);
+
         const progressBar = document.getElementById('processingProgress');
         const statusText = document.getElementById('processingStatus');
 
         if (progressBar) {
           progressBar.style.width = percentage + '%';
+        } else {
+          console.warn('Progress bar element not found');
         }
 
         if (statusText) {
           statusText.textContent = status;
+        } else {
+          console.warn('Status text element not found');
         }
       }
 
@@ -3584,6 +3824,15 @@
       document.addEventListener('DOMContentLoaded', function () {
         // Initialize KanjiOCR workflow functionality
         initializeWorkflowEventListeners();
+
+        // Test Tesseract availability
+        setTimeout(() => {
+          if (typeof Tesseract !== 'undefined') {
+            console.log('✅ Tesseract OCR library loaded successfully');
+          } else {
+            console.error('❌ Tesseract OCR library failed to load');
+          }
+        }, 2000);
       });
 
       // Show Facts section
