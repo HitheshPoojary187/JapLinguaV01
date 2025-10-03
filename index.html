@@ -147,15 +147,50 @@
         height: 20px !important;
         margin: -10px 0 0 -10px;
       }
-      
-      #cropBox>div[data-handle="nw"] { top: -10px !important; left: -10px !important; }
-      #cropBox>div[data-handle="n"] { top: -10px !important; left: 50% !important; transform: translateX(-50%) !important; }
-      #cropBox>div[data-handle="ne"] { top: -10px !important; right: -10px !important; }
-      #cropBox>div[data-handle="e"] { top: 50% !important; right: -10px !important; transform: translateY(-50%) !important; }
-      #cropBox>div[data-handle="se"] { bottom: -10px !important; right: -10px !important; }
-      #cropBox>div[data-handle="s"] { bottom: -10px !important; left: 50% !important; transform: translateX(-50%) !important; }
-      #cropBox>div[data-handle="sw"] { bottom: -10px !important; left: -10px !important; }
-      #cropBox>div[data-handle="w"] { top: 50% !important; left: -10px !important; transform: translateY(-50%) !important; }
+
+      #cropBox>div[data-handle="nw"] {
+        top: -10px !important;
+        left: -10px !important;
+      }
+
+      #cropBox>div[data-handle="n"] {
+        top: -10px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+      }
+
+      #cropBox>div[data-handle="ne"] {
+        top: -10px !important;
+        right: -10px !important;
+      }
+
+      #cropBox>div[data-handle="e"] {
+        top: 50% !important;
+        right: -10px !important;
+        transform: translateY(-50%) !important;
+      }
+
+      #cropBox>div[data-handle="se"] {
+        bottom: -10px !important;
+        right: -10px !important;
+      }
+
+      #cropBox>div[data-handle="s"] {
+        bottom: -10px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+      }
+
+      #cropBox>div[data-handle="sw"] {
+        bottom: -10px !important;
+        left: -10px !important;
+      }
+
+      #cropBox>div[data-handle="w"] {
+        top: 50% !important;
+        left: -10px !important;
+        transform: translateY(-50%) !important;
+      }
     }
 
     /* Camera interface styles */
@@ -2889,7 +2924,7 @@
             console.log('Handle clicked:', handle.dataset.handle);
             startCropResize(e, handle.dataset.handle);
           });
-          
+
           // Touch events for mobile
           handle.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -2898,7 +2933,7 @@
             startCropResize({
               clientX: touch.clientX,
               clientY: touch.clientY,
-              preventDefault: () => {}
+              preventDefault: () => { }
             }, handle.dataset.handle);
           });
         });
@@ -3138,38 +3173,57 @@
       }
 
       function createCroppedImage() {
+        console.log('Creating cropped image with data:', workflowState.cropData);
+
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         const cropImage = document.getElementById('cropImage');
 
+        if (!cropImage) {
+          console.error('Crop image element not found');
+          showAlert('Crop image not found. Please try again.');
+          return;
+        }
+
         canvas.width = workflowState.cropData.width;
         canvas.height = workflowState.cropData.height;
 
-        // Draw the cropped portion
-        context.drawImage(
-          cropImage,
-          workflowState.cropData.x,
-          workflowState.cropData.y,
-          workflowState.cropData.width,
-          workflowState.cropData.height,
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        );
+        console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
 
-        // Convert to blob
-        canvas.toBlob((blob) => {
-          if (blob) {
-            workflowState.croppedImage = blob;
-            workflowState.currentStep = 'processing';
+        try {
+          // Draw the cropped portion
+          context.drawImage(
+            cropImage,
+            workflowState.cropData.x,
+            workflowState.cropData.y,
+            workflowState.cropData.width,
+            workflowState.cropData.height,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
 
-            showAlert('Image cropped successfully', 'success');
-            processImage(blob);
-          } else {
-            showAlert('Failed to create cropped image. Please try again.');
-          }
-        }, 'image/jpeg', 0.9);
+          console.log('Image drawn to canvas successfully');
+
+          // Convert to blob
+          canvas.toBlob((blob) => {
+            if (blob) {
+              console.log('Blob created successfully, size:', blob.size);
+              workflowState.croppedImage = blob;
+              workflowState.currentStep = 'processing';
+
+              showAlert('Image cropped successfully', 'success');
+              processImage(blob);
+            } else {
+              console.error('Failed to create blob from canvas');
+              showAlert('Failed to create cropped image. Please try again.');
+            }
+          }, 'image/jpeg', 0.9);
+        } catch (error) {
+          console.error('Error creating cropped image:', error);
+          showAlert('Failed to crop image. Please try again.');
+        }
       }
 
       function cancelCrop() {
@@ -3264,16 +3318,29 @@
         const imageToProcess = imageBlob || workflowState.croppedImage || workflowState.selectedImage;
 
         if (!imageToProcess) {
+          console.error('No image available for processing');
           showAlert("No image available for processing!");
           return;
         }
+
+        console.log('Image to process:', imageToProcess);
 
         // Update workflow state
         workflowState.currentStep = 'processing';
         workflowState.isLoading = true;
 
         // Show processing interface
+        console.log('Showing processing interface...');
         showInterface('processingInterface');
+
+        // Verify the interface is shown
+        const processingInterface = document.getElementById('processingInterface');
+        if (processingInterface && processingInterface.classList.contains('hidden')) {
+          console.error('Processing interface failed to show');
+          showAlert('Interface error. Please refresh the page and try again.');
+          return;
+        }
+        console.log('Processing interface shown successfully');
 
         // Update progress
         updateProcessingProgress(10, 'Uploading image...');
@@ -3288,10 +3355,17 @@
             : '/upload-image';
 
           console.log('Uploading image to:', apiUrl);
+
           const uploadResponse = await fetch(apiUrl, {
             method: 'POST',
             body: formData
           });
+
+          console.log('Upload response status:', uploadResponse.status);
+
+          if (!uploadResponse.ok) {
+            throw new Error(`Upload failed with status: ${uploadResponse.status}`);
+          }
 
           updateProcessingProgress(30, 'Image uploaded, starting OCR...');
 
@@ -3302,9 +3376,29 @@
           }
           console.log('Upload successful:', uploadData);
 
-          // OCR using Tesseract
+          // OCR using Tesseract with timeout
           updateProcessingProgress(50, 'Extracting text with AI...');
-          const { data: { text } } = await Tesseract.recognize(imageToProcess, 'jpn');
+          console.log('Starting Tesseract OCR...');
+
+          // Create a timeout promise
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('OCR processing timed out after 60 seconds')), 60000);
+          });
+
+          // Create OCR promise
+          const ocrPromise = Tesseract.recognize(imageToProcess, 'jpn', {
+            logger: m => {
+              console.log('Tesseract progress:', m);
+              if (m.status === 'recognizing text') {
+                updateProcessingProgress(50 + (m.progress * 20), 'Extracting text with AI...');
+              }
+            }
+          });
+
+          // Race between OCR and timeout
+          const ocrResult = await Promise.race([ocrPromise, timeoutPromise]);
+
+          const text = ocrResult.data.text;
           console.log('Extracted text:', text);
 
           updateProcessingProgress(70, 'Translating text...');
@@ -3346,26 +3440,50 @@
 
         } catch (err) {
           console.error('OCR Error:', err);
+          console.error('Error stack:', err.stack);
+
           workflowState.error = err.message;
           workflowState.currentStep = 'error';
           workflowState.isLoading = false;
 
-          showAlert('Failed to process the image. Please try again with a clearer image.');
-          resetWorkflow();
+          // More specific error messages
+          let errorMessage = 'Failed to process the image. ';
+          if (err.message.includes('fetch')) {
+            errorMessage += 'Network error - please check your connection.';
+          } else if (err.message.includes('Tesseract')) {
+            errorMessage += 'OCR processing failed - please try with a clearer image.';
+          } else if (err.message.includes('Upload failed')) {
+            errorMessage += 'Image upload failed - please try again.';
+          } else {
+            errorMessage += 'Please try again with a clearer image.';
+          }
+
+          showAlert(errorMessage);
+
+          // Don't reset workflow immediately, let user try again
+          setTimeout(() => {
+            showInterface('croppingInterface');
+          }, 3000);
         }
       }
 
       // Update Processing Progress
       function updateProcessingProgress(percentage, status) {
+        console.log(`Progress: ${percentage}% - ${status}`);
+
         const progressBar = document.getElementById('processingProgress');
         const statusText = document.getElementById('processingStatus');
 
         if (progressBar) {
           progressBar.style.width = percentage + '%';
+        } else {
+          console.warn('Progress bar element not found');
         }
 
         if (statusText) {
           statusText.textContent = status;
+        } else {
+          console.warn('Status text element not found');
         }
       }
 
