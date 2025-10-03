@@ -16,9 +16,11 @@
   </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
     .kanji-font {
       font-family: 'Noto Sans JP', sans-serif;
     }
+
     @keyframes petalFall {
       0% {
         transform: translateY(-10%) rotate(0deg);
@@ -51,10 +53,107 @@
     .ocr-processing-animation {
       animation: pulse 2s infinite;
     }
+
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* Workflow transition animations */
+    .workflow-fade-in {
+      animation: workflowFadeIn 0.5s ease-out forwards;
+    }
+
+    .workflow-fade-out {
+      animation: workflowFadeOut 0.3s ease-in forwards;
+    }
+
+    @keyframes workflowFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes workflowFadeOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+    }
+
+    /* Crop interface styles */
+    #cropContainer {
+      position: relative;
+      display: inline-block;
+      user-select: none;
+      max-width: 100%;
+    }
+
+    #cropOverlay {
+      background: transparent;
+      pointer-events: none;
+    }
+
+    #cropBox {
+      min-width: 50px;
+      min-height: 50px;
+      pointer-events: auto;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgb(59 130 246);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    #cropBox>div {
+      border-radius: 50%;
+      pointer-events: auto;
+      z-index: 10;
+      background: white;
+      border: 2px solid rgb(59 130 246);
+    }
+
+    #cropBox:hover {
+      border-color: rgb(37 99 235);
+    }
+
+    #cropBox>div:hover {
+      background: rgb(59 130 246);
+    }
+
+    /* Camera interface styles */
+    #cameraVideo {
+      transform: scaleX(-1);
+      /* Mirror effect for front camera */
+    }
+
+    /* Progress step styles */
+    .step-active {
+      background-color: rgb(37 99 235) !important;
+      color: white !important;
+    }
+
+    .step-completed {
+      background-color: rgb(34 197 94) !important;
+      color: white !important;
     }
 
     .sakura-petal {
@@ -114,10 +213,179 @@
     .sakura-petal {
       animation: petalFall 4s linear infinite;
     }
+
+    /* Japanese-themed falling leaves animation for white backgrounds */
+    .bg-white {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bg-white::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 15% 25%, rgba(139, 69, 19, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 75% 45%, rgba(160, 82, 45, 0.06) 1px, transparent 1px),
+        radial-gradient(circle at 35% 75%, rgba(205, 133, 63, 0.07) 1px, transparent 1px),
+        radial-gradient(circle at 85% 15%, rgba(222, 184, 135, 0.05) 1px, transparent 1px);
+      background-size: 180px 180px, 220px 220px, 160px 160px, 200px 200px;
+      animation: leafDrift 25s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-white::after {
+      content: '🍂';
+      position: absolute;
+      top: -30px;
+      left: 20%;
+      font-size: 16px;
+      opacity: 0.25;
+      animation: leafFall 12s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Additional falling leaves container */
+    .falling-leaves {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .leaf {
+      position: absolute;
+      top: -50px;
+      font-size: 14px;
+      opacity: 0.2;
+      animation: leafFall 15s linear infinite;
+    }
+
+    .leaf:nth-child(1) {
+      animation-delay: 0s;
+      animation-duration: 18s;
+    }
+
+    .leaf:nth-child(2) {
+      animation-delay: 3s;
+      animation-duration: 16s;
+    }
+
+    .leaf:nth-child(3) {
+      animation-delay: 1s;
+      animation-duration: 20s;
+    }
+
+    .leaf:nth-child(4) {
+      animation-delay: 4s;
+      animation-duration: 17s;
+    }
+
+    .leaf:nth-child(5) {
+      animation-delay: 2s;
+      animation-duration: 19s;
+    }
+
+    .leaf:nth-child(6) {
+      animation-delay: 5s;
+      animation-duration: 15s;
+    }
+
+    .leaf:nth-child(7) {
+      animation-delay: 7s;
+      animation-duration: 21s;
+    }
+
+    .leaf:nth-child(8) {
+      animation-delay: 6s;
+      animation-duration: 14s;
+    }
+
+    /* Ensure content stays above background animations */
+    .bg-white>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes leafFall {
+      0% {
+        transform: translateY(-50px) translateX(0px) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.25;
+      }
+
+      25% {
+        transform: translateY(25vh) translateX(20px) rotate(180deg);
+        opacity: 0.2;
+      }
+
+      50% {
+        transform: translateY(50vh) translateX(-15px) rotate(360deg);
+        opacity: 0.15;
+      }
+
+      75% {
+        transform: translateY(75vh) translateX(25px) rotate(540deg);
+        opacity: 0.1;
+      }
+
+      90% {
+        opacity: 0.05;
+      }
+
+      100% {
+        transform: translateY(calc(100vh + 50px)) translateX(-10px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes leafDrift {
+
+      0%,
+      100% {
+        transform: translateX(0px) translateY(0px);
+      }
+
+      25% {
+        transform: translateX(15px) translateY(-8px);
+      }
+
+      50% {
+        transform: translateX(-10px) translateY(5px);
+      }
+
+      75% {
+        transform: translateX(12px) translateY(-3px);
+      }
+    }
   </style>
 </head>
 
 <body>
+  <!-- Falling Leaves Background Animation -->
+  <div class="falling-leaves">
+    <div class="leaf" style="left: 10%; animation-delay: 0s;">🍂</div>
+    <div class="leaf" style="left: 25%; animation-delay: 3s;">🍁</div>
+    <div class="leaf" style="left: 45%; animation-delay: 1s;">🍂</div>
+    <div class="leaf" style="left: 65%; animation-delay: 4s;">🍁</div>
+    <div class="leaf" style="left: 80%; animation-delay: 2s;">🍂</div>
+    <div class="leaf" style="left: 35%; animation-delay: 5s;">🍁</div>
+    <div class="leaf" style="left: 55%; animation-delay: 7s;">🍂</div>
+    <div class="leaf" style="left: 75%; animation-delay: 6s;">🍁</div>
+  </div>
+
   <!-- Loading Screen -->
   <div id="loadingScreen"
     class="fixed inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center z-50">
@@ -217,6 +485,10 @@
             class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
             Translator
           </button>
+          <button id="btnNavKanjiOCR"
+            class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
+            KanjiOCR
+          </button>
           <button id="btnNavPronunciation"
             class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
             Pronunciation
@@ -229,10 +501,6 @@
             class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
             Facts
           </button>
-          <button id="btnNavKanjiOCR"
-            class="px-3 sm:px-6 py-2 rounded-full font-semibold transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100 text-sm sm:text-base">
-            KanjiOCR
-          </button>
         </nav>
       </header>
 
@@ -244,7 +512,8 @@
               class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-pink-50 ring-1 ring-indigo-100 shadow-md">
               <div class="grid md:grid-cols-2 gap-6 p-6">
                 <div class="flex flex-col justify-center">
-                  <h2 class="text-3xl md:text-4xl font-extrabold text-indigo-700">Discover 日本文化</h2>
+                  <h2 class="text-3xl md:text-4xl font-extrabold text-indigo-700">Discover <span
+                      class="whitespace-nowrap">日本文化</span></h2>
                   <p class="mt-3 text-gray-600 leading-relaxed">
                     Welcome to Japanese Learning Hub — a cozy place to practice
                     Hiragana, Katakana, and explore the rich world of Japan.
@@ -338,15 +607,17 @@
           <div id="optionsPanel" class="w-full max-w-sm hidden">
             <div class="flex flex-col space-y-3">
               <button id="btnHiragana"
-                class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Hiragana</button>
-              <button id="btnKatakana"
-                class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Katakana</button>
-              <button id="btnCharToRomaji"
                 class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Hiragana
-                → Romaji</button>
+                → Romanji</button>
+              <button id="btnKatakana"
+                class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Katakana
+                → Romanji</button>
+              <button id="btnCharToRomaji"
+                class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Romanji
+                → Katakana</button>
               <button id="btnRomajiToChar"
                 class="w-full px-4 py-2 rounded-full font-medium transition-colors duration-300 bg-white text-gray-800 hover:bg-gray-100">Romaji
-                → Katakana</button>
+                → Hiragana</button>
             </div>
           </div>
 
@@ -393,8 +664,8 @@
           <div id="translatorSection" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 hidden">
             <div class="mb-3">
               <h2 class="text-xl font-bold text-indigo-700">Smart Translator</h2>
-              <p class="text-sm text-gray-600 mt-1">Translate between Japanese, Romanji, and English. Romanji input is
-                auto-converted to Hiragana for better results.</p>
+              <p class="text-sm text-gray-600 mt-1">Select the input type (Japanese, Romaji, or English), enter your
+                text, and click on the output to see the corresponding result.</p>
             </div>
             <div class="mb-3 flex items-center space-x-3">
               <label for="inputType" class="text-sm font-medium text-gray-600">Input Type</label>
@@ -463,6 +734,16 @@
                 <span>The text is automatically converted to <span class="font-semibold">Hiragana</span> for accurate
                   pronunciation.</span>
               </div>
+              <div
+                class="flex items-start space-x-2 text-xs text-gray-600 bg-yellow-50/60 rounded-lg p-2 ring-1 ring-yellow-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                  class="w-4 h-4 text-yellow-600 mt-0.5">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+                <span><span class="font-semibold">Troubleshooting:</span> If pronunciation doesn't work, check browser
+                  settings or use "Test Voices" to see available options.</span>
+              </div>
             </div>
             <div class="space-y-4">
               <div>
@@ -483,6 +764,10 @@
                   <span>Speak</span>
                 </button>
                 <div id="pronunciationStatus" class="text-sm text-gray-500"></div>
+                <button id="testVoicesBtn"
+                  class="px-4 py-2 bg-gray-500 text-white rounded-lg text-sm hover:bg-gray-600 transition-colors">
+                  Test Voices
+                </button>
               </div>
               <div id="japaneseOutput"
                 class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl ring-1 ring-indigo-200 p-6 min-h-[80px] hidden">
@@ -501,6 +786,7 @@
               <p class="text-sm text-gray-600 mt-1">Explore essential Japanese phrases and vocabulary with romanji and
                 English translations.</p>
             </div>
+
 
             <div class="mb-6 flex flex-wrap gap-2">
               <button id="showAllBtn"
@@ -538,15 +824,29 @@
 
           <!-- KanjiOCR Section -->
           <div id="kanjiOCRSection" class="w-full max-w-6xl hidden">
+            <!-- Header -->
             <div class="bg-white shadow-sm border-b border-slate-200 rounded-t-xl mb-8">
               <div class="px-4 py-6">
-                <div class="flex items-center space-x-3">
-                  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-xl shadow-lg">
-                    <i class="fas fa-language text-white text-xl"></i>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-xl shadow-lg">
+                      <i class="fas fa-language text-white text-xl"></i>
+                    </div>
+                    <div>
+                      <h1 class="text-2xl font-bold text-gray-900">Kanji Extractor</h1>
+                      <p class="text-gray-600 text-sm">Extract and analyze Japanese characters with AI-powered OCR</p>
+                    </div>
                   </div>
-                  <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Kanji Extractor</h1>
-                    <p class="text-gray-600 text-sm">Extract and analyze Japanese characters with AI-powered OCR</p>
+                  <!-- Progress Breadcrumbs -->
+                  <div id="workflowProgress" class="hidden">
+                    <div class="flex items-center space-x-2 text-sm">
+                      <span id="step1" class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-medium">1.
+                        Input</span>
+                      <i class="fas fa-chevron-right text-gray-400"></i>
+                      <span id="step2" class="px-3 py-1 rounded-full bg-gray-100 text-gray-500">2. Process</span>
+                      <i class="fas fa-chevron-right text-gray-400"></i>
+                      <span id="step3" class="px-3 py-1 rounded-full bg-gray-100 text-gray-500">3. Analyze</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -555,49 +855,233 @@
             <!-- Messages container for alerts -->
             <div id="messages" class="mb-6"></div>
 
-            <!-- Upload Section -->
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 mb-8">
-              <div class="text-center">
-                <div class="mb-6">
-                  <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full mb-4">
-                    <i class="fas fa-cloud-upload-alt text-3xl text-blue-600"></i>
+            <!-- Image Selection Interface -->
+            <div id="imageSelectionInterface" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 mb-8">
+              <div class="text-left">
+                <div class="mb-8">
+                  <div class="flex items-center mb-4">
+                    <div
+                      class="w-20 h-20 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mr-4">
+                      <i class="fas fa-language text-3xl text-blue-600"></i>
+                    </div>
+                    <div>
+                      <h2 class="text-2xl font-semibold text-gray-900 mb-2">Input Japanese Text</h2>
+                      <p class="text-gray-600">Upload an image, capture a photo, or directly type Japanese text</p>
+                    </div>
                   </div>
-                  <h2 class="text-2xl font-semibold text-gray-900 mb-2">Upload Your Image</h2>
-                  <p class="text-gray-600 mb-6">Select an image containing Japanese text to extract and analyze kanji characters</p>
                 </div>
-                
-                <div class="space-y-4">
-                  <div class="relative">
-                    <input 
-                      type="file" 
-                      id="imageInput" 
-                      accept="image/*" 
-                      class="hidden"
-                    >
-                    <label 
-                      for="imageInput" 
-                      class="cursor-pointer inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 border-2 border-dashed border-slate-300 hover:border-slate-400 rounded-xl transition-all duration-200 text-slate-700 hover:text-slate-800 font-medium min-w-64"
-                    >
-                      <i class="fas fa-image mr-3 text-lg"></i>
-                      <span id="fileLabel">Choose Image File</span>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                  <!-- Upload Option -->
+                  <div class="relative group">
+                    <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp" class="hidden">
+                    <label for="imageInput"
+                      class="cursor-pointer flex flex-col items-center justify-center p-8 bg-gradient-to-br from-slate-50 to-blue-50 hover:from-blue-50 hover:to-indigo-50 border-2 border-dashed border-slate-300 hover:border-blue-400 rounded-xl transition-all duration-300 group-hover:shadow-lg min-h-48">
+                      <div
+                        class="w-16 h-16 bg-gradient-to-r from-slate-100 to-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-cloud-upload-alt text-2xl text-blue-600"></i>
+                      </div>
+                      <h3 class="text-lg font-semibold text-gray-900 mb-2">Upload Image</h3>
+                      <p class="text-sm text-gray-600">Choose from your device gallery or files</p>
+                      <p class="text-xs text-gray-500 mt-2">JPG, PNG, WebP • Max 5MB</p>
                     </label>
                   </div>
-                  
-                  <button 
-                    type="button"
-                    id="extractBtn"
-                    disabled
-                    class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 min-w-64"
-                  >
-                    <i class="fas fa-magic mr-3"></i>
-                    Extract Kanji
+
+                  <!-- Camera Option -->
+                  <div class="relative group">
+                    <button type="button" id="cameraBtn"
+                      class="w-full flex flex-col items-center justify-center p-8 bg-gradient-to-br from-slate-50 to-purple-50 hover:from-purple-50 hover:to-indigo-50 border-2 border-dashed border-slate-300 hover:border-purple-400 rounded-xl transition-all duration-300 group-hover:shadow-lg min-h-48">
+                      <div
+                        class="w-16 h-16 bg-gradient-to-r from-slate-100 to-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-camera text-2xl text-purple-600"></i>
+                      </div>
+                      <h3 class="text-lg font-semibold text-gray-900 mb-2">Capture Photo</h3>
+                      <p class="text-sm text-gray-600">Take a new photo with your camera</p>
+                      <p class="text-xs text-gray-500 mt-2">Perfect for books, signs, documents</p>
+                    </button>
+                  </div>
+
+                  <!-- Text Input Option -->
+                  <div class="relative group">
+                    <div
+                      class="w-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-50 to-green-50 hover:from-green-50 hover:to-emerald-50 border-2 border-dashed border-slate-300 hover:border-green-400 rounded-xl transition-all duration-300 group-hover:shadow-lg min-h-48">
+                      <div
+                        class="w-16 h-16 bg-gradient-to-r from-slate-100 to-green-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-keyboard text-2xl text-green-600"></i>
+                      </div>
+                      <h3 class="text-lg font-semibold text-gray-900 mb-3">Type Text</h3>
+                      <textarea id="textInput" placeholder="Type or paste Japanese text here..."
+                        class="w-full h-20 p-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-green-500 resize-none kanji-font"
+                        style="font-size: 16px;"></textarea>
+                      <button id="processTextBtn"
+                        class="mt-3 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        <i class="fas fa-play mr-2"></i>Process Text
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="mt-8 max-w-4xl mx-auto">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                      <div class="flex items-start space-x-3">
+                        <i class="fas fa-camera text-blue-600 mt-0.5"></i>
+                        <div class="text-sm text-blue-800">
+                          <p class="font-medium mb-1">Image/Camera Tips:</p>
+                          <ul class="list-disc list-inside space-y-1 text-blue-700">
+                            <li>Ensure good lighting and clear text visibility</li>
+                            <li>Keep the camera steady and text in focus</li>
+                            <li>You'll be able to crop and adjust before processing</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                      <div class="flex items-start space-x-3">
+                        <i class="fas fa-keyboard text-green-600 mt-0.5"></i>
+                        <div class="text-sm text-green-800">
+                          <p class="font-medium mb-1">Text Input Tips:</p>
+                          <ul class="list-disc list-inside space-y-1 text-green-700">
+                            <li>Type or paste Japanese text directly</li>
+                            <li>Supports hiragana, katakana, and kanji</li>
+                            <li>Perfect for analyzing text from websites or documents</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Camera Interface -->
+            <div id="cameraInterface" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-8 hidden">
+              <div class="text-left mb-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Camera Capture</h3>
+                <p class="text-gray-600">Position your camera to capture the Japanese text</p>
+              </div>
+
+              <div class="relative max-w-2xl mx-auto">
+                <video id="cameraVideo" class="w-full rounded-lg shadow-lg" autoplay playsinline></video>
+                <canvas id="cameraCanvas" class="hidden"></canvas>
+
+                <div class="flex justify-center space-x-4 mt-6">
+                  <button id="capturePhotoBtn"
+                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    <i class="fas fa-camera mr-2"></i>
+                    Capture Photo
+                  </button>
+                  <button id="cancelCameraBtn"
+                    class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    <i class="fas fa-times mr-2"></i>
+                    Cancel
                   </button>
                 </div>
               </div>
             </div>
 
-            <!-- Output Section -->
-            <div id="output" class="space-y-6"></div>
+            <!-- Image Cropping Interface -->
+            <div id="croppingInterface" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-8 hidden">
+              <div class="text-left mb-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Crop Your Image</h3>
+                <p class="text-gray-600">Adjust the selection to focus on the text you want to extract</p>
+              </div>
+
+              <div class="max-w-4xl mx-auto">
+                <div class="relative bg-gray-100 rounded-lg overflow-hidden" id="cropContainer">
+                  <img id="cropImage" class="max-w-full h-auto" style="max-height: 500px;">
+                  <div id="cropOverlay" class="absolute inset-0">
+                    <div id="cropBox" class="absolute cursor-move">
+                      <!-- Resize handles -->
+                      <div class="absolute -top-2 -left-2 w-4 h-4 cursor-nw-resize" data-handle="nw"></div>
+                      <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 cursor-n-resize"
+                        data-handle="n"></div>
+                      <div class="absolute -top-2 -right-2 w-4 h-4 cursor-ne-resize" data-handle="ne"></div>
+                      <div class="absolute top-1/2 -right-2 transform -translate-y-1/2 w-4 h-4 cursor-e-resize"
+                        data-handle="e"></div>
+                      <div class="absolute -bottom-2 -right-2 w-4 h-4 cursor-se-resize" data-handle="se"></div>
+                      <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 cursor-s-resize"
+                        data-handle="s"></div>
+                      <div class="absolute -bottom-2 -left-2 w-4 h-4 cursor-sw-resize" data-handle="sw"></div>
+                      <div class="absolute top-1/2 -left-2 transform -translate-y-1/2 w-4 h-4 cursor-w-resize"
+                        data-handle="w"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex justify-center space-x-4 mt-6">
+                  <button id="confirmCropBtn"
+                    class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    <i class="fas fa-check mr-2"></i>
+                    Confirm Crop
+                  </button>
+                  <button id="cancelCropBtn"
+                    class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    <i class="fas fa-times mr-2"></i>
+                    Cancel
+                  </button>
+                  <button id="resetCropBtn"
+                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    <i class="fas fa-undo mr-2"></i>
+                    Reset Selection
+                  </button>
+                </div>
+
+                <!-- Crop Instructions -->
+                <div class="mt-4 bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-mouse-pointer text-blue-600 mt-0.5"></i>
+                    <div class="text-sm text-blue-800">
+                      <p class="font-medium mb-1">How to crop:</p>
+                      <ul class="list-disc list-inside space-y-1 text-blue-700">
+                        <li>Drag the selection box to move it around</li>
+                        <li>Drag the corner and edge handles to resize</li>
+                        <li>Make sure to include all the text you want to extract</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Processing Interface -->
+            <div id="processingInterface"
+              class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 mb-8 hidden">
+              <div class="text-left">
+                <div class="flex items-center mb-6">
+                  <div
+                    class="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mr-4">
+                    <i class="fas fa-cog fa-spin text-2xl text-blue-600"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Processing Image</h3>
+                    <p class="text-gray-600">Extracting text using AI-powered OCR...</p>
+                  </div>
+                </div>
+                <div class="max-w-md mx-auto">
+                  <div class="bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div id="processingProgress"
+                      class="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full transition-all duration-300"
+                      style="width: 0%"></div>
+                  </div>
+                  <p id="processingStatus" class="text-sm text-gray-500 mt-2">Initializing...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsInterface" class="space-y-6 hidden">
+              <div class="flex justify-between items-center">
+                <h3 class="text-xl font-semibold text-gray-900">Extraction Results</h3>
+                <button id="newImageBtn"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                  <i class="fas fa-plus mr-2"></i>
+                  Change Input
+                </button>
+              </div>
+              <div id="output" class="space-y-6"></div>
+            </div>
           </div>
 
           <div id="factsSection" class="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 hidden">
@@ -1050,8 +1534,21 @@
         if (!text) { if (elOut) { elOut.classList.remove('hidden'); elOut.textContent = 'Please enter text.'; } return; }
 
         var sendText = text;
+        var actualInputType = type;
+
         if (type === 'romanji' && window.wanakana) {
-          sendText = window.wanakana.toHiragana(text);
+          // Check if this is actually Japanese romanji or English text
+          const isLikelyJapaneseRomanji = isJapaneseRomanji(text);
+
+          if (isLikelyJapaneseRomanji) {
+            // Convert Japanese romanji to hiragana
+            sendText = window.wanakana.toHiragana(text);
+            actualInputType = 'japanese';
+          } else {
+            // Treat as English text
+            sendText = text;
+            actualInputType = 'english';
+          }
         }
         // Debug info display removed
 
@@ -1098,7 +1595,7 @@
 
         try {
           showLoader();
-          var url = API_BASE + '/translate?text=' + encodeURIComponent(sendText) + '&inputType=' + encodeURIComponent(type);
+          var url = API_BASE + '/translate?text=' + encodeURIComponent(sendText) + '&inputType=' + encodeURIComponent(actualInputType);
           var res = await fetch(url);
           var data = await res.json();
           if (data && data.error) {
@@ -1107,18 +1604,31 @@
           }
 
           var html = '';
-          if (type === 'japanese') {
-            html = '<strong>Romanji:</strong> ' + (data.romanized || '-') + '<br><strong>English:</strong> ' + (data.translated || '-');
-          } else if (type === 'romanji') {
-            if (!data.translated || data.translated.trim() === text.trim()) {
-              html = '<strong>English:</strong> <span style="color:#888">No translation found</span>';
-            } else {
-              html = '<strong>English:</strong> ' + data.translated;
+
+          if (type === 'romanji') {
+            // For romanji input, always show Japanese and English
+            if (actualInputType === 'japanese') {
+              // Japanese romanji detected -> show English translation
+              html = '<strong>Japanese:</strong> ' + (sendText || text) + '<br><strong>English:</strong> ' + (data.translated || '-');
+            } else if (actualInputType === 'english') {
+              // English text detected -> show Japanese translation
+              html = '<strong>Japanese:</strong> ' + (data.translated || '-') + '<br><strong>English:</strong> ' + text;
             }
+
+            // Add auto-detection note
+            const detectedType = actualInputType === 'japanese' ? 'Japanese Romanji' : 'English';
+            html += '<br><small style="color:#666;font-style:italic;">Auto-detected as: ' + detectedType + '</small>';
+
+          } else if (type === 'japanese') {
+            // Japanese input -> show Romanji and English
+            html = '<strong>Romanji:</strong> ' + (data.romanized || '-') + '<br><strong>English:</strong> ' + (data.translated || '-');
           } else if (type === 'english') {
+            // English input -> show Japanese and Romanji
             var roman = data.romanized;
-            if (!roman && window.wanakana && data.translated) { roman = window.wanakana.toRomaji(data.translated); }
-            html = '<strong>Romanji:</strong> ' + (roman || '-');
+            if (!roman && window.wanakana && data.translated) {
+              roman = window.wanakana.toRomaji(data.translated);
+            }
+            html = '<strong>Japanese:</strong> ' + (data.translated || '-') + '<br><strong>Romanji:</strong> ' + (roman || '-');
           }
           if (elOut) { elOut.classList.remove('hidden'); elOut.innerHTML = html; }
         } catch (e) {
@@ -1131,6 +1641,120 @@
       if (elInput) elInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') doTranslate(); });
       if (elType) elType.addEventListener('change', function () { if (!elInput) return; elInput.placeholder = (elType.value === 'japanese') ? 'Type Japanese text...' : (elType.value === 'romanji' ? 'Type Romanji text...' : 'Type English text...'); });
 
+      // Helper function to detect if text is Japanese romanji or English
+      function isJapaneseRomanji(text) {
+        // Common Japanese romanji patterns and words
+        const japaneseRomanjiPatterns = [
+          // Common Japanese syllables
+          /\b(ka|ki|ku|ke|ko|ga|gi|gu|ge|go)\b/i,
+          /\b(sa|shi|su|se|so|za|ji|zu|ze|zo)\b/i,
+          /\b(ta|chi|tsu|te|to|da|de|do)\b/i,
+          /\b(na|ni|nu|ne|no)\b/i,
+          /\b(ha|hi|fu|he|ho|ba|bi|bu|be|bo|pa|pi|pu|pe|po)\b/i,
+          /\b(ma|mi|mu|me|mo)\b/i,
+          /\b(ya|yu|yo)\b/i,
+          /\b(ra|ri|ru|re|ro)\b/i,
+          /\b(wa|wo|n)\b/i,
+          // Common Japanese words in romanji
+          /\b(konnichiwa|arigatou|sayonara|ohayou|konbanwa|sumimasen|gomen|hai|iie)\b/i,
+          /\b(watashi|anata|kore|sore|are|doko|nani|dare|itsu|doushite)\b/i,
+          /\b(tabemasu|nomimasu|ikimasu|kimasu|mimasu|kikimasu)\b/i,
+          // Japanese-specific character combinations
+          /tsu|shu|chu|ryu|kyu|gyu|sha|cha|nya|hya|mya|rya/i,
+          // Double consonants (common in Japanese)
+          /kk|pp|tt|ss(?!ion)/i
+        ];
+
+        // English-specific patterns that are unlikely in Japanese romanji
+        const englishPatterns = [
+          // Common English words
+          /\b(the|and|or|but|in|on|at|to|for|of|with|by)\b/i,
+          /\b(i|you|he|she|it|we|they|me|him|her|us|them)\b/i,
+          /\b(am|is|are|was|were|be|been|being|have|has|had|do|does|did)\b/i,
+          /\b(like|love|want|need|can|could|will|would|should|must)\b/i,
+          /\b(good|bad|big|small|hot|cold|new|old|young|happy|sad)\b/i,
+          /\b(coffee|tea|water|food|house|car|book|phone|computer)\b/i,
+          // English-specific letter combinations
+          /th|ph|gh|ck|ng(?!a|i|u|e|o)|qu|x/i,
+          // Common English suffixes
+          /ing\b|ed\b|er\b|est\b|ly\b|tion\b|sion\b/i
+        ];
+
+        // Count matches for each type
+        let japaneseScore = 0;
+        let englishScore = 0;
+
+        japaneseRomanjiPatterns.forEach(pattern => {
+          if (pattern.test(text)) japaneseScore++;
+        });
+
+        englishPatterns.forEach(pattern => {
+          if (pattern.test(text)) englishScore++;
+        });
+
+        // Additional checks
+        const words = text.toLowerCase().split(/\s+/);
+
+        // Check for Japanese-style word structure (mostly CV syllables)
+        const japaneseStructure = words.some(word =>
+          /^[aiueo]$|^[kgsztdnhbpmyrw][aiueo]([kgsztdnhbpmyrw][aiueo])*n?$/i.test(word)
+        );
+
+        if (japaneseStructure) japaneseScore += 2;
+
+        // Check for English articles and common words
+        const hasEnglishArticles = /\b(a|an|the)\b/i.test(text);
+        if (hasEnglishArticles) englishScore += 3;
+
+        // If no clear indicators, check length and character patterns
+        if (japaneseScore === 0 && englishScore === 0) {
+          // Short text with simple CV patterns might be Japanese
+          if (text.length <= 20 && /^[a-z\s]*$/i.test(text) && !/[bcdfgjklpqvwxz]{2,}/i.test(text)) {
+            return true;
+          }
+          // Longer text with complex patterns is likely English
+          return false;
+        }
+
+        return japaneseScore > englishScore;
+      }
+
+      // --- Translation function for OCR ---
+      async function translateExtractedText(text, inputType) {
+        try {
+          var sendText = text;
+          var actualInputType = inputType;
+
+          if (inputType === 'romanji' && window.wanakana) {
+            // Check if this is actually Japanese romanji or English text
+            const isLikelyJapaneseRomanji = isJapaneseRomanji(text);
+
+            if (isLikelyJapaneseRomanji) {
+              // Convert Japanese romanji to hiragana
+              sendText = window.wanakana.toHiragana(text);
+              actualInputType = 'japanese';
+            } else {
+              // Treat as English text
+              sendText = text;
+              actualInputType = 'english';
+            }
+          }
+
+          var url = API_BASE + '/translate?text=' + encodeURIComponent(sendText) + '&inputType=' + encodeURIComponent(actualInputType);
+          var res = await fetch(url);
+          var data = await res.json();
+
+          if (data && data.error) {
+            throw new Error(data.error);
+          }
+
+          return data;
+        } catch (error) {
+          console.error('Translation error:', error);
+          throw error;
+        }
+      }
+
       // --- Pronunciation functionality ---
       var elRomanjiInput = document.getElementById('romanjiInput');
       var elSpeakBtn = document.getElementById('speakBtn');
@@ -1139,42 +1763,161 @@
       var elPronunciationStatus = document.getElementById('pronunciationStatus');
 
       async function speakJapanese() {
-        await ensureWanakana();
-        var romanji = (elRomanjiInput && elRomanjiInput.value || '').trim();
-        if (!romanji) {
-          if (elPronunciationStatus) elPronunciationStatus.textContent = 'Please type a word!';
-          return;
-        }
+        try {
+          await ensureWanakana();
+          var romanji = (elRomanjiInput && elRomanjiInput.value || '').trim();
 
-        // Convert to Hiragana
-        var japaneseWord = window.wanakana ? window.wanakana.toHiragana(romanji) : romanji;
+          if (!romanji) {
+            if (elPronunciationStatus) elPronunciationStatus.textContent = 'Please type a word!';
+            return;
+          }
 
-        // Display the Japanese text
-        if (elJapaneseText) elJapaneseText.textContent = japaneseWord;
-        if (elJapaneseOutput) elJapaneseOutput.classList.remove('hidden');
+          console.log('Input romanji:', romanji);
 
-        // Use Web Speech API to speak the Japanese word
-        if ('speechSynthesis' in window) {
+          // Convert to Hiragana
+          var japaneseWord = window.wanakana ? window.wanakana.toHiragana(romanji) : romanji;
+          console.log('Converted to Japanese:', japaneseWord);
+
+          // Display the Japanese text
+          if (elJapaneseText) elJapaneseText.textContent = japaneseWord;
+          if (elJapaneseOutput) elJapaneseOutput.classList.remove('hidden');
+
+          // Check if Web Speech API is available
+          if (!('speechSynthesis' in window)) {
+            if (elPronunciationStatus) elPronunciationStatus.textContent = 'Speech synthesis not supported in this browser';
+            return;
+          }
+
+          // Stop any ongoing speech
+          speechSynthesis.cancel();
+
+          // Wait for voices to load
+          await waitForVoices();
+
+          // Get available voices
+          const voices = speechSynthesis.getVoices();
+          console.log('Available voices:', voices.length);
+
+          // Find Japanese voice
+          const japaneseVoice = voices.find(voice =>
+            voice.lang.startsWith('ja') ||
+            voice.name.toLowerCase().includes('japanese') ||
+            voice.name.toLowerCase().includes('japan')
+          );
+
+          console.log('Japanese voice found:', japaneseVoice ? japaneseVoice.name : 'None');
+
+          // Create utterance
           var utterance = new SpeechSynthesisUtterance(japaneseWord);
-          utterance.lang = 'ja-JP'; // Japanese language
-          utterance.rate = 0.8; // Slightly slower for learning
+
+          // Set voice and language
+          if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+          }
+          utterance.lang = 'ja-JP';
+          utterance.rate = 0.7; // Slower for learning
+          utterance.pitch = 1.0;
+          utterance.volume = 1.0;
+
+          // Event handlers
           utterance.onstart = function () {
+            console.log('Speech started');
             if (elPronunciationStatus) elPronunciationStatus.textContent = 'Speaking...';
           };
+
           utterance.onend = function () {
+            console.log('Speech ended');
             if (elPronunciationStatus) elPronunciationStatus.textContent = 'Ready';
           };
-          utterance.onerror = function () {
-            if (elPronunciationStatus) elPronunciationStatus.textContent = 'Speech not available';
+
+          utterance.onerror = function (event) {
+            console.error('Speech error:', event.error);
+            if (elPronunciationStatus) {
+              elPronunciationStatus.textContent = `Speech error: ${event.error}`;
+            }
           };
+
+          // Speak the text
+          console.log('Starting speech synthesis');
           speechSynthesis.speak(utterance);
-        } else {
-          if (elPronunciationStatus) elPronunciationStatus.textContent = 'Speech synthesis not supported';
+
+        } catch (error) {
+          console.error('Pronunciation error:', error);
+          if (elPronunciationStatus) {
+            elPronunciationStatus.textContent = 'Error: ' + error.message;
+          }
         }
+      }
+
+      // Helper function to wait for voices to load
+      function waitForVoices() {
+        return new Promise((resolve) => {
+          const voices = speechSynthesis.getVoices();
+          if (voices.length > 0) {
+            resolve();
+            return;
+          }
+
+          const voicesChangedHandler = () => {
+            speechSynthesis.removeEventListener('voiceschanged', voicesChangedHandler);
+            resolve();
+          };
+
+          speechSynthesis.addEventListener('voiceschanged', voicesChangedHandler);
+
+          // Fallback timeout
+          setTimeout(resolve, 1000);
+        });
       }
 
       if (elSpeakBtn) elSpeakBtn.addEventListener('click', speakJapanese);
       if (elRomanjiInput) elRomanjiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') speakJapanese(); });
+
+      // Test voices functionality
+      const testVoicesBtn = document.getElementById('testVoicesBtn');
+      if (testVoicesBtn) {
+        testVoicesBtn.addEventListener('click', async function () {
+          try {
+            if (!('speechSynthesis' in window)) {
+              alert('Speech synthesis not supported in this browser');
+              return;
+            }
+
+            await waitForVoices();
+            const voices = speechSynthesis.getVoices();
+
+            let voiceInfo = `Available voices (${voices.length} total):\n\n`;
+
+            const japaneseVoices = voices.filter(voice =>
+              voice.lang.startsWith('ja') ||
+              voice.name.toLowerCase().includes('japanese') ||
+              voice.name.toLowerCase().includes('japan')
+            );
+
+            if (japaneseVoices.length > 0) {
+              voiceInfo += 'Japanese voices:\n';
+              japaneseVoices.forEach(voice => {
+                voiceInfo += `- ${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}\n`;
+              });
+            } else {
+              voiceInfo += 'No Japanese voices found.\n';
+              voiceInfo += '\nAll available voices:\n';
+              voices.slice(0, 10).forEach(voice => {
+                voiceInfo += `- ${voice.name} (${voice.lang})\n`;
+              });
+              if (voices.length > 10) {
+                voiceInfo += `... and ${voices.length - 10} more\n`;
+              }
+            }
+
+            voiceInfo += '\nNote: If no Japanese voices are available, the system will use the default voice which may not pronounce Japanese correctly.';
+
+            alert(voiceInfo);
+          } catch (error) {
+            alert('Error testing voices: ' + error.message);
+          }
+        });
+      }
 
       // Data
       var hiragana = [
@@ -1373,7 +2116,7 @@
         sections.forEach(section => {
           if (section) section.classList.add('hidden');
         });
-        
+
         // Show KanjiOCR section
         const ocrSection = document.getElementById('kanjiOCRSection');
         if (ocrSection) {
@@ -1382,10 +2125,10 @@
         } else {
           console.error('KanjiOCR section not found');
         }
-        
+
         // Set nav active
         setNavActive('kanjiocr');
-        
+
         // Show KanjiOCR section
         const kanjiOCRSection = document.getElementById('kanjiOCRSection');
         if (kanjiOCRSection) {
@@ -1394,7 +2137,7 @@
         } else {
           console.error('KanjiOCR section element not found');
         }
-        
+
         // Set nav active
         setNavActive('kanjiocr');
       }
@@ -1538,14 +2281,16 @@
       });
 
       btnCharToRomaji.addEventListener('click', function () {
-        mode = 'charToRomaji';
+        currentAlphabet = katakana;  // Set to katakana for "Romanji → Katakana"
+        mode = 'romajiToChar';       // Show romanji on front, katakana on back
         setActive(btnCharToRomaji, true);
         setActive(btnRomajiToChar, false);
         startSession();
       });
 
       btnRomajiToChar.addEventListener('click', function () {
-        mode = 'romajiToChar';
+        currentAlphabet = hiragana;  // Set to hiragana for "Romaji → Hiragana"
+        mode = 'romajiToChar';       // Show romanji on front, hiragana on back
         setActive(btnCharToRomaji, false);
         setActive(btnRomajiToChar, true);
         startSession();
@@ -1749,129 +2494,761 @@
         btnNavKanjiOCR.addEventListener('click', showKanjiOCR);
       }
 
-      // KanjiOCR UI Functions
-      function handleFileSelect() {
-        const file = document.getElementById('imageInput').files[0];
-        const fileLabel = document.getElementById('fileLabel');
-        const extractBtn = document.getElementById('extractBtn');
-        
-        if (file) {
-          fileLabel.innerHTML = `<i class="fas fa-check mr-2"></i>${file.name}`;
-          extractBtn.disabled = false;
-          extractBtn.innerHTML = '<i class="fas fa-magic mr-3"></i>Extract Kanji';
-        } else {
-          fileLabel.innerHTML = 'Choose Image File';
-          extractBtn.disabled = true;
+      // KanjiOCR Workflow State Management
+      const workflowState = {
+        currentStep: 'initial', // initial, selecting, cropping, processing, results, error
+        selectedImage: null,
+        croppedImage: null,
+        cropData: null,
+        ocrResult: null,
+        error: null,
+        isLoading: false
+      };
+
+      // UI State Management
+      const uiElements = {
+        imageSelectionInterface: null,
+        cameraInterface: null,
+        croppingInterface: null,
+        processingInterface: null,
+        resultsInterface: null,
+        workflowProgress: null,
+        messages: null
+      };
+
+      // Initialize UI elements
+      function initializeUIElements() {
+        uiElements.imageSelectionInterface = document.getElementById('imageSelectionInterface');
+        uiElements.cameraInterface = document.getElementById('cameraInterface');
+        uiElements.croppingInterface = document.getElementById('croppingInterface');
+        uiElements.processingInterface = document.getElementById('processingInterface');
+        uiElements.resultsInterface = document.getElementById('resultsInterface');
+        uiElements.workflowProgress = document.getElementById('workflowProgress');
+        uiElements.messages = document.getElementById('messages');
+      }
+
+      // Show/Hide Interface Sections
+      function showInterface(interfaceName) {
+        // Hide all interfaces
+        Object.values(uiElements).forEach(element => {
+          if (element && element.classList) {
+            element.classList.add('hidden');
+            element.classList.remove('workflow-fade-in');
+          }
+        });
+
+        // Show specific interface with animation
+        const targetInterface = uiElements[interfaceName];
+        if (targetInterface) {
+          targetInterface.classList.remove('hidden');
+          targetInterface.classList.add('workflow-fade-in');
+        }
+
+        // Update progress breadcrumbs
+        updateProgressBreadcrumbs();
+      }
+
+      // Update Progress Breadcrumbs
+      function updateProgressBreadcrumbs() {
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+
+        if (!step1 || !step2 || !step3) return;
+
+        // Reset all steps
+        [step1, step2, step3].forEach(step => {
+          step.className = 'px-3 py-1 rounded-full bg-gray-100 text-gray-500';
+        });
+
+        // Update based on current step
+        switch (workflowState.currentStep) {
+          case 'initial':
+          case 'selecting':
+            step1.className = 'px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-medium';
+            uiElements.workflowProgress.classList.add('hidden');
+            break;
+          case 'cropping':
+            step1.className = 'px-3 py-1 rounded-full step-completed';
+            step2.className = 'px-3 py-1 rounded-full step-active';
+            uiElements.workflowProgress.classList.remove('hidden');
+            break;
+          case 'processing':
+            step1.className = 'px-3 py-1 rounded-full step-completed';
+            step2.className = 'px-3 py-1 rounded-full step-completed';
+            step3.className = 'px-3 py-1 rounded-full step-active';
+            break;
+          case 'results':
+            [step1, step2, step3].forEach(step => {
+              step.className = 'px-3 py-1 rounded-full step-completed';
+            });
+            break;
         }
       }
 
-      function showLoadingState() {
-        const extractBtn = document.getElementById('extractBtn');
-        extractBtn.disabled = true;
-        extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Processing...';
-      }
-
-      function resetButtonState() {
-        const extractBtn = document.getElementById('extractBtn');
-        extractBtn.disabled = false;
-        extractBtn.innerHTML = '<i class="fas fa-magic mr-3"></i>Extract Kanji';
-      }
-
+      // Show Alert Messages
       function showAlert(message, type = 'error') {
-        const alertClass = type === 'error' ? 'from-red-500 to-red-600' : 'from-green-500 to-green-600';
-        const iconClass = type === 'error' ? 'fa-exclamation-triangle' : 'fa-check-circle';
-        
+        const alertClass = type === 'error' ? 'from-red-500 to-red-600' :
+          type === 'success' ? 'from-green-500 to-green-600' :
+            'from-blue-500 to-blue-600';
+        const iconClass = type === 'error' ? 'fa-exclamation-triangle' :
+          type === 'success' ? 'fa-check-circle' :
+            'fa-info-circle';
+
         const alertHtml = `
-          <div class="bg-gradient-to-r ${alertClass} text-white p-4 rounded-xl shadow-lg mb-6">
-            <div class="flex items-center">
-              <i class="fas ${iconClass} mr-3 text-lg"></i>
-              <span class="font-medium">${message}</span>
+          <div class="bg-gradient-to-r ${alertClass} text-white p-4 rounded-xl shadow-lg mb-6 workflow-fade-in">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <i class="fas ${iconClass} mr-3 text-lg"></i>
+                <span class="font-medium">${message}</span>
+              </div>
+              <button onclick="this.parentElement.parentElement.remove()" class="text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
           </div>
         `;
-        
-        const messagesContainer = document.getElementById('messages');
-        if (messagesContainer) {
-          messagesContainer.innerHTML = alertHtml + messagesContainer.innerHTML;
-        } else {
-          console.error('Messages container not found');
+
+        if (uiElements.messages) {
+          uiElements.messages.innerHTML = alertHtml + uiElements.messages.innerHTML;
+          // Auto-remove success messages after 5 seconds
+          if (type === 'success') {
+            setTimeout(() => {
+              const alerts = uiElements.messages.querySelectorAll('.bg-gradient-to-r');
+              if (alerts.length > 0) alerts[0].remove();
+            }, 5000);
+          }
         }
       }
 
-      // KanjiOCR functions
-      function handleFileSelect() {
-        const file = document.getElementById('imageInput').files[0];
-        const fileLabel = document.getElementById('fileLabel');
-        const extractBtn = document.getElementById('extractBtn');
-        
-        if (file) {
-          fileLabel.innerHTML = `<i class="fas fa-check mr-2"></i>${file.name}`;
-          extractBtn.disabled = false;
-          extractBtn.innerHTML = '<i class="fas fa-magic mr-3"></i>Extract Kanji';
-        } else {
-          fileLabel.innerHTML = 'Choose Image File';
-          extractBtn.disabled = true;
+      // Clear Messages
+      function clearMessages() {
+        if (uiElements.messages) {
+          uiElements.messages.innerHTML = '';
         }
       }
 
-      function showLoadingState() {
-        const extractBtn = document.getElementById('extractBtn');
-        extractBtn.disabled = true;
-        extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Processing...';
+      // Reset Workflow
+      function resetWorkflow() {
+        workflowState.currentStep = 'initial';
+        workflowState.selectedImage = null;
+        workflowState.croppedImage = null;
+        workflowState.cropData = null;
+        workflowState.ocrResult = null;
+        workflowState.error = null;
+        workflowState.isLoading = false;
+
+        clearMessages();
+        showInterface('imageSelectionInterface');
+
+        // Reset file input
+        const imageInput = document.getElementById('imageInput');
+        if (imageInput) imageInput.value = '';
+
+        // Reset text input
+        const textInput = document.getElementById('textInput');
+        if (textInput) textInput.value = '';
+
+        // Clear results
+        const output = document.getElementById('output');
+        if (output) output.innerHTML = '';
       }
 
-      function resetButtonState() {
-        const extractBtn = document.getElementById('extractBtn');
-        extractBtn.disabled = false;
-        extractBtn.innerHTML = '<i class="fas fa-magic mr-3"></i>Extract Kanji';
+      // Image Selection Functions
+      function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file
+        if (!validateImageFile(file)) return;
+
+        workflowState.selectedImage = file;
+        workflowState.currentStep = 'cropping';
+
+        showAlert(`Image selected: ${file.name}`, 'success');
+        initializeCropping(file);
       }
 
-      async function processImage() {
-        console.log('processImage function called');
-        const fileInput = document.getElementById('imageInput');
-        const file = fileInput && fileInput.files && fileInput.files[0];
-        console.log('Selected file:', file);
-        
-        if (!file) {
-          showAlert("Please upload an image first!");
+      function validateImageFile(file) {
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        if (!validTypes.includes(file.type)) {
+          showAlert('Please select a valid image file (JPG, PNG, or WebP)');
+          return false;
+        }
+
+        if (file.size > maxSize) {
+          showAlert('Image file is too large. Please select an image smaller than 5MB');
+          return false;
+        }
+
+        return true;
+      }
+
+      // Camera Functions
+      let cameraStream = null;
+
+      async function initializeCamera() {
+        try {
+          workflowState.currentStep = 'selecting';
+          showInterface('cameraInterface');
+
+          const video = document.getElementById('cameraVideo');
+          const constraints = {
+            video: {
+              facingMode: 'environment', // Use back camera for text capture
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            }
+          };
+
+          cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+          video.srcObject = cameraStream;
+
+          showAlert('Camera initialized successfully', 'success');
+        } catch (error) {
+          console.error('Camera error:', error);
+          if (error.name === 'NotAllowedError') {
+            showAlert('Camera permission denied. Please allow camera access and try again.');
+          } else if (error.name === 'NotFoundError') {
+            showAlert('No camera found. Please use the upload option instead.');
+          } else {
+            showAlert('Failed to initialize camera. Please try the upload option.');
+          }
+          resetWorkflow();
+        }
+      }
+
+      function capturePhoto() {
+        const video = document.getElementById('cameraVideo');
+        const canvas = document.getElementById('cameraCanvas');
+        const context = canvas.getContext('2d');
+
+        // Set canvas dimensions to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw the video frame to canvas (flip horizontally to correct mirror effect)
+        context.scale(-1, 1);
+        context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+        context.scale(-1, 1);
+
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            workflowState.selectedImage = blob;
+            workflowState.currentStep = 'cropping';
+
+            stopCamera();
+            showAlert('Photo captured successfully', 'success');
+            initializeCropping(blob);
+          } else {
+            showAlert('Failed to capture photo. Please try again.');
+          }
+        }, 'image/jpeg', 0.9);
+      }
+
+      function stopCamera() {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach(track => track.stop());
+          cameraStream = null;
+        }
+      }
+
+      function cancelCamera() {
+        stopCamera();
+        resetWorkflow();
+      }
+
+      // Cropping Functions
+      let cropState = {
+        image: null,
+        canvas: null,
+        context: null,
+        cropBox: null,
+        isDragging: false,
+        isResizing: false,
+        dragStart: { x: 0, y: 0 },
+        resizeHandle: null,
+        imageRect: null
+      };
+
+      function initializeCropping(imageFile) {
+        console.log('Initializing cropping with image:', imageFile);
+        showInterface('croppingInterface');
+
+        const cropImage = document.getElementById('cropImage');
+        const cropBox = document.getElementById('cropBox');
+
+        if (!cropImage || !cropBox) {
+          console.error('Crop elements not found:', { cropImage, cropBox });
+          showAlert('Cropping interface not properly initialized');
           return;
         }
 
-        showLoadingState();
+        // Create object URL for the image
+        const imageUrl = URL.createObjectURL(imageFile);
+        cropImage.src = imageUrl;
 
-        // Make sure output container exists
-        let outputContainer = document.getElementById("output");
-        if (!outputContainer) {
-          console.log('Creating output container');
-          outputContainer = document.createElement('div');
-          outputContainer.id = 'output';
-          outputContainer.className = 'space-y-6';
-          document.getElementById('kanjiOCRSection').appendChild(outputContainer);
+        cropImage.onload = function () {
+          console.log('Image loaded for cropping');
+
+          // Wait a bit for the image to be fully rendered
+          setTimeout(() => {
+            // Initialize crop box to cover most of the image
+            const imageRect = cropImage.getBoundingClientRect();
+            const containerRect = document.getElementById('cropContainer').getBoundingClientRect();
+
+            cropState.imageRect = {
+              left: imageRect.left - containerRect.left,
+              top: imageRect.top - containerRect.top,
+              width: imageRect.width,
+              height: imageRect.height
+            };
+
+            console.log('Image rect:', cropState.imageRect);
+
+            // Set initial crop box (80% of image, centered)
+            const cropWidth = cropState.imageRect.width * 0.8;
+            const cropHeight = cropState.imageRect.height * 0.8;
+            const cropLeft = cropState.imageRect.left + (cropState.imageRect.width - cropWidth) / 2;
+            const cropTop = cropState.imageRect.top + (cropState.imageRect.height - cropHeight) / 2;
+
+            cropBox.style.left = cropLeft + 'px';
+            cropBox.style.top = cropTop + 'px';
+            cropBox.style.width = cropWidth + 'px';
+            cropBox.style.height = cropHeight + 'px';
+            cropBox.style.display = 'block';
+
+            console.log('Crop box initialized:', {
+              left: cropLeft,
+              top: cropTop,
+              width: cropWidth,
+              height: cropHeight
+            });
+
+            // Initialize crop interactions
+            initializeCropInteractions();
+          }, 100);
+        };
+
+        cropImage.onerror = function () {
+          console.error('Failed to load image for cropping');
+          showAlert('Failed to load image for cropping');
+        };
+      }
+
+      function initializeCropInteractions() {
+        const cropBox = document.getElementById('cropBox');
+        const cropContainer = document.getElementById('cropContainer');
+
+        if (!cropBox || !cropContainer) {
+          console.error('Crop interaction elements not found');
+          return;
         }
 
-        // Show processing status
-        document.getElementById("output").innerHTML = `
-          <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 text-center">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full mb-4">
-              <i class="fas fa-cog fa-spin text-2xl text-blue-600"></i>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">Processing Image</h3>
-            <p class="text-gray-600">Extracting text using AI-powered OCR...</p>
-            <div class="mt-4">
-              <div class="bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-        `;
+        console.log('Initializing crop interactions');
+
+        // Remove any existing event listeners
+        cropBox.removeEventListener('mousedown', startCropDrag);
+        document.removeEventListener('mousemove', handleCropDrag);
+        document.removeEventListener('mouseup', endCropDrag);
+
+        // Add event listeners for crop box interactions
+        cropBox.addEventListener('mousedown', startCropDrag);
+        document.addEventListener('mousemove', handleCropDrag);
+        document.addEventListener('mouseup', endCropDrag);
+
+        // Add event listeners for resize handles
+        const handles = cropBox.querySelectorAll('div[data-handle]');
+        console.log('Found resize handles:', handles.length);
+
+        handles.forEach((handle) => {
+          handle.addEventListener('mousedown', (e) => {
+            console.log('Handle clicked:', handle.dataset.handle);
+            startCropResize(e, handle.dataset.handle);
+          });
+        });
+
+        // Touch events for mobile
+        cropBox.addEventListener('touchstart', startCropDragTouch);
+        document.addEventListener('touchmove', handleCropDragTouch);
+        document.addEventListener('touchend', endCropDrag);
+
+        // Prevent default drag behavior on handles
+        handles.forEach(handle => {
+          handle.addEventListener('dragstart', (e) => e.preventDefault());
+        });
+
+        console.log('Crop interactions initialized successfully');
+      }
+
+      function startCropDrag(e) {
+        if (e.target.hasAttribute('data-handle')) return; // Don't drag when clicking handles
+
+        cropState.isDragging = true;
+        cropState.dragStart = { x: e.clientX, y: e.clientY };
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      function startCropDragTouch(e) {
+        if (e.target.hasAttribute('data-handle')) return;
+
+        cropState.isDragging = true;
+        const touch = e.touches[0];
+        cropState.dragStart = { x: touch.clientX, y: touch.clientY };
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      function handleCropDrag(e) {
+        if (!cropState.isDragging && !cropState.isResizing) return;
+
+        const cropBox = document.getElementById('cropBox');
+        if (!cropBox) return;
+
+        const deltaX = e.clientX - cropState.dragStart.x;
+        const deltaY = e.clientY - cropState.dragStart.y;
+
+        if (cropState.isDragging) {
+          moveCropBox(cropBox, deltaX, deltaY);
+        } else if (cropState.isResizing) {
+          resizeCropBox(cropBox, deltaX, deltaY, cropState.resizeHandle);
+        }
+
+        cropState.dragStart = { x: e.clientX, y: e.clientY };
+        e.preventDefault();
+      }
+
+      function handleCropDragTouch(e) {
+        if (!cropState.isDragging && !cropState.isResizing) return;
+
+        const touch = e.touches[0];
+        const cropBox = document.getElementById('cropBox');
+        const deltaX = touch.clientX - cropState.dragStart.x;
+        const deltaY = touch.clientY - cropState.dragStart.y;
+
+        if (cropState.isDragging) {
+          moveCropBox(cropBox, deltaX, deltaY);
+        }
+
+        cropState.dragStart = { x: touch.clientX, y: touch.clientY };
+        e.preventDefault();
+      }
+
+      function endCropDrag() {
+        cropState.isDragging = false;
+        cropState.isResizing = false;
+        cropState.resizeHandle = null;
+      }
+
+      function moveCropBox(cropBox, deltaX, deltaY) {
+        const currentLeft = parseInt(cropBox.style.left) || 0;
+        const currentTop = parseInt(cropBox.style.top) || 0;
+        const boxWidth = parseInt(cropBox.style.width) || 0;
+        const boxHeight = parseInt(cropBox.style.height) || 0;
+
+        // Calculate new position with bounds checking
+        let newLeft = currentLeft + deltaX;
+        let newTop = currentTop + deltaY;
+
+        // Keep within image bounds
+        newLeft = Math.max(cropState.imageRect.left, Math.min(newLeft, cropState.imageRect.left + cropState.imageRect.width - boxWidth));
+        newTop = Math.max(cropState.imageRect.top, Math.min(newTop, cropState.imageRect.top + cropState.imageRect.height - boxHeight));
+
+        cropBox.style.left = newLeft + 'px';
+        cropBox.style.top = newTop + 'px';
+      }
+
+      function startCropResize(e, handle) {
+        cropState.isResizing = true;
+        cropState.resizeHandle = handle;
+        cropState.dragStart = { x: e.clientX, y: e.clientY };
+        e.stopPropagation();
+        e.preventDefault();
+      }
+
+      function resizeCropBox(cropBox, deltaX, deltaY, handle) {
+        const minSize = 50;
+        const currentLeft = parseInt(cropBox.style.left) || 0;
+        const currentTop = parseInt(cropBox.style.top) || 0;
+        const currentWidth = parseInt(cropBox.style.width) || 0;
+        const currentHeight = parseInt(cropBox.style.height) || 0;
+
+        let newLeft = currentLeft;
+        let newTop = currentTop;
+        let newWidth = currentWidth;
+        let newHeight = currentHeight;
+
+        // Handle different resize directions
+        switch (handle) {
+          case 'nw':
+            newLeft = currentLeft + deltaX;
+            newTop = currentTop + deltaY;
+            newWidth = currentWidth - deltaX;
+            newHeight = currentHeight - deltaY;
+            break;
+          case 'n':
+            newTop = currentTop + deltaY;
+            newHeight = currentHeight - deltaY;
+            break;
+          case 'ne':
+            newTop = currentTop + deltaY;
+            newWidth = currentWidth + deltaX;
+            newHeight = currentHeight - deltaY;
+            break;
+          case 'e':
+            newWidth = currentWidth + deltaX;
+            break;
+          case 'se':
+            newWidth = currentWidth + deltaX;
+            newHeight = currentHeight + deltaY;
+            break;
+          case 's':
+            newHeight = currentHeight + deltaY;
+            break;
+          case 'sw':
+            newLeft = currentLeft + deltaX;
+            newWidth = currentWidth - deltaX;
+            newHeight = currentHeight + deltaY;
+            break;
+          case 'w':
+            newLeft = currentLeft + deltaX;
+            newWidth = currentWidth - deltaX;
+            break;
+        }
+
+        // Apply minimum size constraints
+        if (newWidth < minSize) {
+          if (handle.includes('w')) newLeft = currentLeft + currentWidth - minSize;
+          newWidth = minSize;
+        }
+        if (newHeight < minSize) {
+          if (handle.includes('n')) newTop = currentTop + currentHeight - minSize;
+          newHeight = minSize;
+        }
+
+        // Keep within image bounds
+        if (newLeft < cropState.imageRect.left) {
+          newWidth -= (cropState.imageRect.left - newLeft);
+          newLeft = cropState.imageRect.left;
+        }
+        if (newTop < cropState.imageRect.top) {
+          newHeight -= (cropState.imageRect.top - newTop);
+          newTop = cropState.imageRect.top;
+        }
+        if (newLeft + newWidth > cropState.imageRect.left + cropState.imageRect.width) {
+          newWidth = cropState.imageRect.left + cropState.imageRect.width - newLeft;
+        }
+        if (newTop + newHeight > cropState.imageRect.top + cropState.imageRect.height) {
+          newHeight = cropState.imageRect.top + cropState.imageRect.height - newTop;
+        }
+
+        // Apply the new dimensions
+        cropBox.style.left = newLeft + 'px';
+        cropBox.style.top = newTop + 'px';
+        cropBox.style.width = newWidth + 'px';
+        cropBox.style.height = newHeight + 'px';
+      }
+
+      function resetCropSelection() {
+        const cropBox = document.getElementById('cropBox');
+
+        // Reset to 80% of image, centered
+        const cropWidth = cropState.imageRect.width * 0.8;
+        const cropHeight = cropState.imageRect.height * 0.8;
+        const cropLeft = cropState.imageRect.left + (cropState.imageRect.width - cropWidth) / 2;
+        const cropTop = cropState.imageRect.top + (cropState.imageRect.height - cropHeight) / 2;
+
+        cropBox.style.left = cropLeft + 'px';
+        cropBox.style.top = cropTop + 'px';
+        cropBox.style.width = cropWidth + 'px';
+        cropBox.style.height = cropHeight + 'px';
+      }
+
+      function confirmCrop() {
+        const cropBox = document.getElementById('cropBox');
+        const cropImage = document.getElementById('cropImage');
+
+        // Get crop dimensions relative to the actual image
+        const cropLeft = parseInt(cropBox.style.left) - cropState.imageRect.left;
+        const cropTop = parseInt(cropBox.style.top) - cropState.imageRect.top;
+        const cropWidth = parseInt(cropBox.style.width);
+        const cropHeight = parseInt(cropBox.style.height);
+
+        // Validate crop size
+        if (cropWidth < 50 || cropHeight < 50) {
+          showAlert('Crop area is too small. Please select a larger area (minimum 50x50 pixels).');
+          return;
+        }
+
+        // Calculate crop ratios
+        const scaleX = cropImage.naturalWidth / cropState.imageRect.width;
+        const scaleY = cropImage.naturalHeight / cropState.imageRect.height;
+
+        workflowState.cropData = {
+          x: cropLeft * scaleX,
+          y: cropTop * scaleY,
+          width: cropWidth * scaleX,
+          height: cropHeight * scaleY,
+          originalWidth: cropImage.naturalWidth,
+          originalHeight: cropImage.naturalHeight
+        };
+
+        // Create cropped image
+        createCroppedImage();
+      }
+
+      function createCroppedImage() {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        const cropImage = document.getElementById('cropImage');
+
+        canvas.width = workflowState.cropData.width;
+        canvas.height = workflowState.cropData.height;
+
+        // Draw the cropped portion
+        context.drawImage(
+          cropImage,
+          workflowState.cropData.x,
+          workflowState.cropData.y,
+          workflowState.cropData.width,
+          workflowState.cropData.height,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+        // Convert to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            workflowState.croppedImage = blob;
+            workflowState.currentStep = 'processing';
+
+            showAlert('Image cropped successfully', 'success');
+            processImage(blob);
+          } else {
+            showAlert('Failed to create cropped image. Please try again.');
+          }
+        }, 'image/jpeg', 0.9);
+      }
+
+      function cancelCrop() {
+        // Clean up object URL
+        const cropImage = document.getElementById('cropImage');
+        if (cropImage.src.startsWith('blob:')) {
+          URL.revokeObjectURL(cropImage.src);
+        }
+
+        resetWorkflow();
+      }
+
+      // Text Input Processing Function
+      async function processTextInput() {
+        const textInput = document.getElementById('textInput');
+        const text = textInput ? textInput.value.trim() : '';
+
+        if (!text) {
+          showAlert('Please enter some Japanese text to analyze.');
+          return;
+        }
+
+        console.log('Processing text input:', text);
+
+        // Update workflow state
+        workflowState.currentStep = 'processing';
+        workflowState.isLoading = true;
+        workflowState.selectedImage = null; // No image for text input
+        workflowState.croppedImage = null;
+
+        // Show processing interface
+        showInterface('processingInterface');
+
+        // Update progress
+        updateProcessingProgress(30, 'Processing text input...');
+
+        try {
+          // Translate the text using the existing translation function
+          updateProcessingProgress(60, 'Translating text...');
+
+          let translationData = null;
+          if (text && text.trim()) {
+            try {
+              translationData = await translateExtractedText(text, 'japanese');
+              console.log('Translation data:', translationData);
+            } catch (e) {
+              console.error('Translation failed:', e);
+              // Show a user-friendly message if translation fails
+              translationData = {
+                romanized: 'Translation service unavailable',
+                translated: 'Translation service unavailable'
+              };
+            }
+          }
+
+          updateProcessingProgress(90, 'Analyzing kanji characters...');
+
+          // Store result
+          workflowState.ocrResult = {
+            extractedText: text,
+            translationData: translationData,
+            source: 'text_input'
+          };
+
+          // Show results
+          workflowState.currentStep = 'results';
+          workflowState.isLoading = false;
+          showInterface('resultsInterface');
+
+          // Display results
+          displayOCRResults(text, translationData);
+
+          updateProcessingProgress(100, 'Complete!');
+          showAlert('Text analysis completed successfully!', 'success');
+
+        } catch (err) {
+          console.error('Text processing error:', err);
+          workflowState.error = err.message;
+          workflowState.currentStep = 'error';
+          workflowState.isLoading = false;
+
+          showAlert('Failed to process the text. Please try again.');
+          resetWorkflow();
+        }
+      }
+
+      // OCR Processing Functions
+      async function processImage(imageBlob = null) {
+        console.log('processImage function called with workflow');
+
+        // Use the cropped image blob or fall back to selected image
+        const imageToProcess = imageBlob || workflowState.croppedImage || workflowState.selectedImage;
+
+        if (!imageToProcess) {
+          showAlert("No image available for processing!");
+          return;
+        }
+
+        // Update workflow state
+        workflowState.currentStep = 'processing';
+        workflowState.isLoading = true;
+
+        // Show processing interface
+        showInterface('processingInterface');
+
+        // Update progress
+        updateProcessingProgress(10, 'Uploading image...');
 
         try {
           // First upload the image to our server
           const formData = new FormData();
-          formData.append('image', file);
-          
-          const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
-            ? 'http://localhost:5000/upload-image' 
+          formData.append('image', imageToProcess);
+
+          const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:5000/upload-image'
             : '/upload-image';
 
           console.log('Uploading image to:', apiUrl);
@@ -1879,6 +3256,9 @@
             method: 'POST',
             body: formData
           });
+
+          updateProcessingProgress(30, 'Image uploaded, starting OCR...');
+
           const uploadData = await uploadResponse.json();
           if (uploadData.error) {
             console.error('Upload error:', uploadData.error);
@@ -1887,203 +3267,324 @@
           console.log('Upload successful:', uploadData);
 
           // OCR using Tesseract
-          const { data: { text } } = await Tesseract.recognize(file, 'jpn');
+          updateProcessingProgress(50, 'Extracting text with AI...');
+          const { data: { text } } = await Tesseract.recognize(imageToProcess, 'jpn');
           console.log('Extracted text:', text);
-          
-          // Translate the extracted text
+
+          updateProcessingProgress(70, 'Translating text...');
+
+          // Translate the extracted text using the existing translation function
           let translationData = null;
           if (text && text.trim()) {
             try {
-              translationData = await translateText(text, 'japanese');
+              translationData = await translateExtractedText(text, 'japanese');
               console.log('Translation data:', translationData);
             } catch (e) {
               console.error('Translation failed:', e);
+              // Show a user-friendly message if translation fails
+              translationData = {
+                romanized: 'Translation service unavailable',
+                translated: 'Translation service unavailable'
+              };
             }
           }
-          
-          // Show extracted text with translation
-          let translationHtml = '';
-          if (translationData) {
-            translationHtml = `
-              <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 class="text-sm font-semibold text-blue-800 mb-2 flex items-center">
-                  <i class="fas fa-language mr-2"></i>
-                  Translation
-                </h4>
-                <div class="space-y-2">
-                  <div>
-                    <span class="text-xs text-blue-600 font-medium">Romanji:</span>
-                    <p class="text-blue-800">${translationData.romanized || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <span class="text-xs text-blue-600 font-medium">English:</span>
-                    <p class="text-blue-800">${translationData.translated || 'N/A'}</p>
-                  </div>
-                </div>
-              </div>
-            `;
-          }
-          
-          document.getElementById("output").innerHTML = `
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
-              <div class="flex items-center mb-4">
-                <div class="bg-gradient-to-r from-green-100 to-emerald-100 p-2 rounded-lg mr-3">
-                  <i class="fas fa-file-text text-green-600 text-lg"></i>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900">Extracted Text</h3>
-              </div>
-              <div class="bg-gray-50 rounded-xl p-4 kanji-font">
-                <p class="text-gray-800 text-lg leading-relaxed">${text || 'No text extracted'}</p>
-                ${translationHtml}
-              </div>
-            </div>
-          `;
 
-          // Extract unique Kanji
-          const kanjis = [...new Set(text.match(/[\u4e00-\u9faf]/g))];
-          if (!kanjis || kanjis.length === 0) {
-            document.getElementById("output").innerHTML += `
-              <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
-                <div class="text-center">
-                  <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-full mb-4">
-                    <i class="fas fa-search text-2xl text-yellow-600"></i>
-                  </div>
-                  <h3 class="text-xl font-semibold text-gray-900 mb-2">No Kanji Found</h3>
-                  <p class="text-gray-600">The image doesn't seem to contain any Japanese kanji characters.</p>
-                </div>
-              </div>
-            `;
-            resetButtonState();
-            return;
-          }
+          updateProcessingProgress(90, 'Analyzing kanji characters...');
 
-          // Show kanji count and start processing
-          document.getElementById("output").innerHTML += `
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center">
-                  <div class="bg-gradient-to-r from-purple-100 to-violet-100 p-2 rounded-lg mr-3">
-                    <i class="fas fa-language text-purple-600 text-lg"></i>
-                  </div>
-                  <h3 class="text-xl font-semibold text-gray-900">Kanji Analysis</h3>
-                </div>
-                <span class="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                  ${kanjis.length} character${kanjis.length !== 1 ? 's' : ''} found
-                </span>
-              </div>
-              <div class="grid grid-cols-1 gap-4" id="kanjiResults">
-                <!-- Kanji cards will be inserted here -->
-              </div>
-            </div>
-          `;
+          // Store OCR result
+          workflowState.ocrResult = {
+            extractedText: text,
+            translationData: translationData
+          };
 
-          const kanjiResults = document.getElementById('kanjiResults');
-          
-          // Fetch Kanji details
-          for (const kanji of kanjis) {
-            try {
-              const res = await fetch(`https://kanjiapi.dev/v1/kanji/${encodeURIComponent(kanji)}`);
-              if (!res.ok) continue;
-              const data = await res.json();
+          // Show results
+          workflowState.currentStep = 'results';
+          workflowState.isLoading = false;
+          showInterface('resultsInterface');
 
-              // Convert readings to Romaji
-              const onRomaji = data.on_readings.map(r => window.wanakana.toRomaji(r));
-              const kunRomaji = data.kun_readings.map(r => window.wanakana.toRomaji(r));
+          // Display results
+          displayOCRResults(text, translationData);
 
-              const gradeDisplay = data.grade ? `Grade ${data.grade}` : 'Advanced';
-              const gradeColor = data.grade && data.grade <= 6 ? 'text-green-600 bg-green-100' : 'text-purple-600 bg-purple-100';
+          updateProcessingProgress(100, 'Complete!');
+          showAlert('Text extraction completed successfully!', 'success');
 
-              kanjiResults.innerHTML += `
-                <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 border border-slate-200 hover:shadow-lg transition-all duration-200">
-                  <div class="flex items-start justify-between mb-4">
-                    <div class="kanji-font text-4xl font-bold text-gray-900 bg-white p-3 rounded-xl shadow-sm">
-                      ${data.kanji}
-                    </div>
-                    <div class="flex space-x-2">
-                      <span class="${gradeColor} px-2 py-1 rounded-full text-xs font-medium">
-                        ${gradeDisplay}
-                      </span>
-                      <span class="text-slate-600 bg-slate-100 px-2 py-1 rounded-full text-xs font-medium">
-                        ${data.stroke_count} strokes
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div class="space-y-3">
-                    <div class="bg-white rounded-lg p-3">
-                      <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                        <i class="fas fa-globe-americas mr-2 text-blue-500"></i>
-                        Meanings
-                      </h4>
-                      <p class="text-gray-800 font-medium">${data.meanings.join(', ')}</p>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div class="bg-white rounded-lg p-3">
-                        <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                          <i class="fas fa-yin-yang mr-2 text-red-500"></i>
-                          On'yomi
-                        </h4>
-                        <p class="kanji-font text-gray-800 mb-1">${data.on_readings.join(', ') || "N/A"}</p>
-                        <p class="text-sm text-gray-600 italic">${onRomaji.join(', ') || "N/A"}</p>
-                      </div>
-                      
-                      <div class="bg-white rounded-lg p-3">
-                        <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                          <i class="fas fa-yin-yang mr-2 text-indigo-500"></i>
-                          Kun'yomi
-                        </h4>
-                        <p class="kanji-font text-gray-800 mb-1">${data.kun_readings.join(', ') || "N/A"}</p>
-                        <p class="text-sm text-gray-600 italic">${kunRomaji.join(', ') || "N/A"}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `;
-            } catch (err) {
-              console.error('Error processing kanji:', kanji, err);
-            }
-          }
-          
-          resetButtonState();
-          
         } catch (err) {
           console.error('OCR Error:', err);
+          workflowState.error = err.message;
+          workflowState.currentStep = 'error';
+          workflowState.isLoading = false;
+
           showAlert('Failed to process the image. Please try again with a clearer image.');
-          resetButtonState();
+          resetWorkflow();
         }
       }
 
-      // Initialize event listeners
-      document.addEventListener('DOMContentLoaded', function() {
-        // Initialize KanjiOCR functionality
-        initializeKanjiOCR();
-      });
+      // Update Processing Progress
+      function updateProcessingProgress(percentage, status) {
+        const progressBar = document.getElementById('processingProgress');
+        const statusText = document.getElementById('processingStatus');
 
-      function initializeKanjiOCR() {
-        console.log('Initializing KanjiOCR functionality');
+        if (progressBar) {
+          progressBar.style.width = percentage + '%';
+        }
+
+        if (statusText) {
+          statusText.textContent = status;
+        }
+      }
+
+      // Display OCR Results
+      function displayOCRResults(text, translationData) {
+        const output = document.getElementById('output');
+        if (!output) return;
+
+        // Show extracted text with translation
+        let translationHtml = '';
+        if (translationData) {
+          translationHtml = `
+            <div class="mt-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-sm">
+              <h4 class="text-lg font-bold text-blue-800 mb-4 flex items-center">
+                <i class="fas fa-language mr-3 text-xl"></i>
+                Full Sentence Translation
+              </h4>
+              <div class="space-y-4">
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                  <span class="text-sm text-blue-600 font-semibold uppercase tracking-wide">Romaji:</span>
+                  <p class="text-lg text-blue-900 font-medium mt-1">${translationData.romanized || 'N/A'}</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                  <span class="text-sm text-blue-600 font-semibold uppercase tracking-wide">English:</span>
+                  <p class="text-lg text-blue-900 font-medium mt-1">${translationData.translated || 'N/A'}</p>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        output.innerHTML = `
+          <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
+            <div class="flex items-center mb-4">
+              <div class="bg-gradient-to-r from-green-100 to-emerald-100 p-3 rounded-xl mr-4">
+                <i class="fas fa-file-text text-green-600 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900">Japanese Text Analysis</h3>
+                <p class="text-sm text-gray-600">
+                  ${workflowState.ocrResult?.source === 'text_input' ?
+            'Text input with full translation and analysis' :
+            'Extracted from image with full translation'}
+                </p>
+              </div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-6 kanji-font">
+              <div class="mb-4">
+                <span class="text-sm text-gray-600 font-semibold uppercase tracking-wide">Original Japanese:</span>
+                <p class="text-gray-800 text-2xl leading-relaxed mt-2 font-medium">${text || 'No text extracted'}</p>
+              </div>
+              ${translationHtml}
+            </div>
+          </div>
+        `;
+
+        // Extract unique Kanji
+        const kanjis = [...new Set(text.match(/[\u4e00-\u9faf]/g))];
+        if (!kanjis || kanjis.length === 0) {
+          output.innerHTML += `
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+              <div class="text-left">
+                <div class="flex items-center mb-6">
+                  <div class="w-20 h-20 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mr-4">
+                    <i class="fas fa-search text-3xl text-yellow-600"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-3">No Kanji Found</h3>
+                    <p class="text-gray-600 text-lg">The extracted text doesn't contain any Japanese kanji characters, but the full sentence translation above shows the meaning.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        // Show kanji count and start processing
+        output.innerHTML += `
+          <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-6">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center">
+                <div class="bg-gradient-to-r from-purple-100 to-violet-100 p-3 rounded-xl mr-4">
+                  <i class="fas fa-search text-purple-600 text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900">Individual Kanji Analysis</h3>
+                  <p class="text-sm text-gray-600">Detailed breakdown of each kanji character</p>
+                </div>
+              </div>
+              <span class="bg-gradient-to-r from-purple-100 to-violet-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold">
+                ${kanjis.length} character${kanjis.length !== 1 ? 's' : ''} found
+              </span>
+            </div>
+            <div class="grid grid-cols-1 gap-4" id="kanjiResults">
+              <!-- Kanji cards will be inserted here -->
+            </div>
+          </div>
+        `;
+
+        // Fetch and display Kanji details
+        displayKanjiAnalysis(kanjis);
+      }
+
+      // Display Kanji Analysis
+      async function displayKanjiAnalysis(kanjis) {
+        const kanjiResults = document.getElementById('kanjiResults');
+        if (!kanjiResults) return;
+
+        // Fetch Kanji details
+        for (const kanji of kanjis) {
+          try {
+            const res = await fetch(`https://kanjiapi.dev/v1/kanji/${encodeURIComponent(kanji)}`);
+            if (!res.ok) continue;
+            const data = await res.json();
+
+            // Convert readings to Romaji
+            const onRomaji = data.on_readings.map(r => window.wanakana.toRomaji(r));
+            const kunRomaji = data.kun_readings.map(r => window.wanakana.toRomaji(r));
+
+            const gradeDisplay = data.grade ? `Grade ${data.grade}` : 'Advanced';
+            const gradeColor = data.grade && data.grade <= 6 ? 'text-green-600 bg-green-100' : 'text-purple-600 bg-purple-100';
+
+            kanjiResults.innerHTML += `
+              <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 border border-slate-200 hover:shadow-lg transition-all duration-200">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="kanji-font text-4xl font-bold text-gray-900 bg-white p-3 rounded-xl shadow-sm">
+                    ${data.kanji}
+                  </div>
+                  <div class="flex space-x-2">
+                    <span class="${gradeColor} px-2 py-1 rounded-full text-xs font-medium">
+                      ${gradeDisplay}
+                    </span>
+                    <span class="text-slate-600 bg-slate-100 px-2 py-1 rounded-full text-xs font-medium">
+                      ${data.stroke_count} strokes
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="space-y-3">
+                  <div class="bg-white rounded-lg p-3">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                      <i class="fas fa-globe-americas mr-2 text-blue-500"></i>
+                      Meanings
+                    </h4>
+                    <p class="text-gray-800 font-medium">${data.meanings.join(', ')}</p>
+                  </div>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="bg-white rounded-lg p-3">
+                      <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                        <i class="fas fa-yin-yang mr-2 text-red-500"></i>
+                        On'yomi
+                      </h4>
+                      <p class="kanji-font text-gray-800 mb-1">${data.on_readings.join(', ') || "N/A"}</p>
+                      <p class="text-sm text-gray-600 italic">${onRomaji.join(', ') || "N/A"}</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-3">
+                      <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                        <i class="fas fa-yin-yang mr-2 text-indigo-500"></i>
+                        Kun'yomi
+                      </h4>
+                      <p class="kanji-font text-gray-800 mb-1">${data.kun_readings.join(', ') || "N/A"}</p>
+                      <p class="text-sm text-gray-600 italic">${kunRomaji.join(', ') || "N/A"}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          } catch (err) {
+            console.error('Error processing kanji:', kanji, err);
+          }
+        }
+      }
+
+      // Initialize Workflow Event Listeners
+      function initializeWorkflowEventListeners() {
+        console.log('Initializing KanjiOCR workflow functionality');
+
+        // Initialize UI elements
+        initializeUIElements();
+
+        // Image selection events
         const imageInput = document.getElementById('imageInput');
-        const extractBtn = document.getElementById('extractBtn');
-        const messagesContainer = document.getElementById('messages');
-        
-        if (!messagesContainer) {
-          console.error('Messages container not found');
-        }
-        
+        const cameraBtn = document.getElementById('cameraBtn');
+
         if (imageInput) {
-          console.log('Adding file input event listener');
           imageInput.addEventListener('change', handleFileSelect);
-        } else {
-          console.error('Image input not found');
         }
-        
-        if (extractBtn) {
-          console.log('Adding extract button event listener');
-          extractBtn.addEventListener('click', processImage);
-        } else {
-          console.error('Extract button not found');
+
+        if (cameraBtn) {
+          cameraBtn.addEventListener('click', initializeCamera);
         }
+
+        // Camera interface events
+        const capturePhotoBtn = document.getElementById('capturePhotoBtn');
+        const cancelCameraBtn = document.getElementById('cancelCameraBtn');
+
+        if (capturePhotoBtn) {
+          capturePhotoBtn.addEventListener('click', capturePhoto);
+        }
+
+        if (cancelCameraBtn) {
+          cancelCameraBtn.addEventListener('click', cancelCamera);
+        }
+
+        // Cropping interface events
+        const confirmCropBtn = document.getElementById('confirmCropBtn');
+        const cancelCropBtn = document.getElementById('cancelCropBtn');
+        const resetCropBtn = document.getElementById('resetCropBtn');
+
+        if (confirmCropBtn) {
+          confirmCropBtn.addEventListener('click', confirmCrop);
+        }
+
+        if (cancelCropBtn) {
+          cancelCropBtn.addEventListener('click', cancelCrop);
+        }
+
+        if (resetCropBtn) {
+          resetCropBtn.addEventListener('click', resetCropSelection);
+        }
+
+        // New image button
+        const newImageBtn = document.getElementById('newImageBtn');
+        if (newImageBtn) {
+          newImageBtn.addEventListener('click', resetWorkflow);
+        }
+
+        // Text input processing
+        const processTextBtn = document.getElementById('processTextBtn');
+        if (processTextBtn) {
+          processTextBtn.addEventListener('click', processTextInput);
+        }
+
+        // Allow Enter key in text area to process
+        const textInput = document.getElementById('textInput');
+        if (textInput) {
+          textInput.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+              processTextInput();
+            }
+          });
+        }
+
+        // Initialize workflow to show image selection
+        resetWorkflow();
       }
+
+      // Initialize event listeners when DOM is loaded
+      document.addEventListener('DOMContentLoaded', function () {
+        // Initialize KanjiOCR workflow functionality
+        initializeWorkflowEventListeners();
+      });
 
       // Show Facts section
       function showFacts() {
