@@ -6,9 +6,30 @@ const _interopDefault = (m) => (m && m.default) ? m.default : m;
 const Kuroshiro = _interopDefault(require("kuroshiro"));
 const KuromojiAnalyzer = _interopDefault(require("kuroshiro-analyzer-kuromoji"));
 const { phrases, words } = require("./japanese-phrases-data");
+const multer = require('multer');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
+// Configure multer for handling file uploads
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
+// Handle file upload for OCR
+app.post('/upload-image', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  // Convert the buffer to base64
+  const base64Image = req.file.buffer.toString('base64');
+  res.json({ base64Image });
+});
 
 const kuroshiro = new Kuroshiro();
 (async () => {
