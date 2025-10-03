@@ -2861,10 +2861,8 @@
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        // Draw the video frame to canvas (flip horizontally to correct mirror effect)
-        context.scale(-1, 1);
-        context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-        context.scale(-1, 1);
+        // Draw the video frame to canvas (no flip needed since camera is not mirrored)
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         // Convert canvas to blob
         canvas.toBlob((blob) => {
