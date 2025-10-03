@@ -3324,6 +3324,21 @@
         }
 
         console.log('Image to process:', imageToProcess);
+        console.log('Image type:', imageToProcess.type);
+        console.log('Image size:', imageToProcess.size);
+
+        // Validate image
+        if (imageToProcess.size === 0) {
+          console.error('Image file is empty');
+          showAlert('Image file is empty. Please try again with a valid image.');
+          return;
+        }
+
+        if (imageToProcess.size > 10 * 1024 * 1024) { // 10MB limit
+          console.error('Image file too large:', imageToProcess.size);
+          showAlert('Image file is too large. Please use an image smaller than 10MB.');
+          return;
+        }
 
         // Update workflow state
         workflowState.currentStep = 'processing';
@@ -3346,56 +3361,42 @@
         updateProcessingProgress(10, 'Uploading image...');
 
         try {
-          // First upload the image to our server
-          const formData = new FormData();
-          formData.append('image', imageToProcess);
-
-          const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'http://localhost:5000/upload-image'
-            : '/upload-image';
-
-          console.log('Uploading image to:', apiUrl);
-
-          const uploadResponse = await fetch(apiUrl, {
-            method: 'POST',
-            body: formData
-          });
-
-          console.log('Upload response status:', uploadResponse.status);
-
-          if (!uploadResponse.ok) {
-            throw new Error(`Upload failed with status: ${uploadResponse.status}`);
-          }
-
-          updateProcessingProgress(30, 'Image uploaded, starting OCR...');
-
-          const uploadData = await uploadResponse.json();
-          if (uploadData.error) {
-            console.error('Upload error:', uploadData.error);
-            throw new Error(uploadData.error);
-          }
-          console.log('Upload successful:', uploadData);
+          // Skip server upload and go directly to OCR
+          updateProcessingProgress(30, 'Preparing image for OCR...');
+          console.log('Skipping server upload, processing directly with Tesseract');
 
           // OCR using Tesseract with timeout
           updateProcessingProgress(50, 'Extracting text with AI...');
           console.log('Starting Tesseract OCR...');
 
-          // Create a timeout promise
+          // Check if Tesseract is available
+          if (typeof Tesseract === 'undefined') {
+            throw new Error('Tesseract OCR library not loaded. Please refresh the page and try again.');
+          }
+
+          // Create a timeout promise (increased to 90 seconds for better reliability)
           const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('OCR processing timed out after 60 seconds')), 60000);
+            setTimeout(() => reject(new Error('OCR processing timed out after 90 seconds')), 90000);
           });
 
-          // Create OCR promise
+          // Create OCR promise with better error handling
           const ocrPromise = Tesseract.recognize(imageToProcess, 'jpn', {
             logger: m => {
               console.log('Tesseract progress:', m);
               if (m.status === 'recognizing text') {
-                updateProcessingProgress(50 + (m.progress * 20), 'Extracting text with AI...');
+                const progress = Math.round(m.progress * 100);
+                updateProcessingProgress(50 + (m.progress * 30), `Extracting text... ${progress}%`);
+              } else if (m.status) {
+                updateProcessingProgress(50, `OCR Status: ${m.status}`);
               }
             }
+          }).catch(error => {
+            console.error('Tesseract OCR error:', error);
+            throw new Error(`OCR processing failed: ${error.message}`);
           });
 
           // Race between OCR and timeout
+          console.log('Starting OCR processing...');
           const ocrResult = await Promise.race([ocrPromise, timeoutPromise]);
 
           const text = ocrResult.data.text;
@@ -3448,20 +3449,27 @@
 
           // More specific error messages
           let errorMessage = 'Failed to process the image. ';
-          if (err.message.includes('fetch')) {
+          if (err.message.includes('timed out')) {
+            errorMessage += 'Processing took too long - please try with a smaller or clearer image.';
+          } else if (err.message.includes('Tesseract') || err.message.includes('OCR')) {
+            errorMessage += 'OCR processing failed - please try with a clearer image with better contrast.';
+          } else if (err.message.includes('not loaded')) {
+            errorMessage += 'OCR library not loaded - please refresh the page and try again.';
+          } else if (err.message.includes('fetch') || err.message.includes('network')) {
             errorMessage += 'Network error - please check your connection.';
-          } else if (err.message.includes('Tesseract')) {
-            errorMessage += 'OCR processing failed - please try with a clearer image.';
-          } else if (err.message.includes('Upload failed')) {
-            errorMessage += 'Image upload failed - please try again.';
           } else {
-            errorMessage += 'Please try again with a clearer image.';
+            errorMessage += 'Please try again with a clearer image or refresh the page.';
           }
 
           showAlert(errorMessage);
 
-          // Don't reset workflow immediately, let user try again
+          // Reset progress bar
+          updateProcessingProgress(0, 'Processing failed');
+
+          // Return to cropping interface after a delay
           setTimeout(() => {
+            workflowState.currentStep = 'cropping';
+            workflowState.isLoading = false;
             showInterface('croppingInterface');
           }, 3000);
         }
@@ -3738,6 +3746,15 @@
       document.addEventListener('DOMContentLoaded', function () {
         // Initialize KanjiOCR workflow functionality
         initializeWorkflowEventListeners();
+        
+        // Test Tesseract availability
+        setTimeout(() => {
+          if (typeof Tesseract !== 'undefined') {
+            console.log('✅ Tesseract OCR library loaded successfully');
+          } else {
+            console.error('❌ Tesseract OCR library failed to load');
+          }
+        }, 2000);
       });
 
       // Show Facts section
