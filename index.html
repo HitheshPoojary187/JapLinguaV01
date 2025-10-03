@@ -129,6 +129,7 @@
       z-index: 10;
       background: white;
       border: 2px solid rgb(59 130 246);
+      transition: all 0.2s ease;
     }
 
     #cropBox:hover {
@@ -137,6 +138,24 @@
 
     #cropBox>div:hover {
       background: rgb(59 130 246);
+    }
+
+    /* Mobile-friendly resize handles */
+    @media (max-width: 768px) {
+      #cropBox>div {
+        width: 20px !important;
+        height: 20px !important;
+        margin: -10px 0 0 -10px;
+      }
+      
+      #cropBox>div[data-handle="nw"] { top: -10px !important; left: -10px !important; }
+      #cropBox>div[data-handle="n"] { top: -10px !important; left: 50% !important; transform: translateX(-50%) !important; }
+      #cropBox>div[data-handle="ne"] { top: -10px !important; right: -10px !important; }
+      #cropBox>div[data-handle="e"] { top: 50% !important; right: -10px !important; transform: translateY(-50%) !important; }
+      #cropBox>div[data-handle="se"] { bottom: -10px !important; right: -10px !important; }
+      #cropBox>div[data-handle="s"] { bottom: -10px !important; left: 50% !important; transform: translateX(-50%) !important; }
+      #cropBox>div[data-handle="sw"] { bottom: -10px !important; left: -10px !important; }
+      #cropBox>div[data-handle="w"] { top: 50% !important; left: -10px !important; transform: translateY(-50%) !important; }
     }
 
     /* Camera interface styles */
@@ -1010,19 +1029,19 @@
                   </div>
                 </div>
 
-                <div class="flex justify-center space-x-4 mt-6">
+                <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-6">
                   <button id="confirmCropBtn"
-                    class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    class="w-full sm:w-auto px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
                     <i class="fas fa-check mr-2"></i>
                     Confirm Crop
                   </button>
                   <button id="cancelCropBtn"
-                    class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    class="w-full sm:w-auto px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
                     <i class="fas fa-times mr-2"></i>
                     Cancel
                   </button>
                   <button id="resetCropBtn"
-                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
+                    class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-colors">
                     <i class="fas fa-undo mr-2"></i>
                     Reset Selection
                   </button>
@@ -1031,12 +1050,12 @@
                 <!-- Crop Instructions -->
                 <div class="mt-4 bg-blue-50 rounded-lg p-4 border border-blue-200">
                   <div class="flex items-start space-x-3">
-                    <i class="fas fa-mouse-pointer text-blue-600 mt-0.5"></i>
+                    <i class="fas fa-hand-pointer text-blue-600 mt-0.5"></i>
                     <div class="text-sm text-blue-800">
                       <p class="font-medium mb-1">How to crop:</p>
                       <ul class="list-disc list-inside space-y-1 text-blue-700">
                         <li>Drag the selection box to move it around</li>
-                        <li>Drag the corner and edge handles to resize</li>
+                        <li>Drag the corner and edge handles to resize (larger handles on mobile)</li>
                         <li>Make sure to include all the text you want to extract</li>
                       </ul>
                     </div>
@@ -2865,13 +2884,26 @@
         console.log('Found resize handles:', handles.length);
 
         handles.forEach((handle) => {
+          // Mouse events for desktop
           handle.addEventListener('mousedown', (e) => {
             console.log('Handle clicked:', handle.dataset.handle);
             startCropResize(e, handle.dataset.handle);
           });
+          
+          // Touch events for mobile
+          handle.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            console.log('Handle touched:', handle.dataset.handle);
+            const touch = e.touches[0];
+            startCropResize({
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+              preventDefault: () => {}
+            }, handle.dataset.handle);
+          });
         });
 
-        // Touch events for mobile
+        // Touch events for mobile crop box movement
         cropBox.addEventListener('touchstart', startCropDragTouch);
         document.addEventListener('touchmove', handleCropDragTouch);
         document.addEventListener('touchend', endCropDrag);
@@ -2927,11 +2959,15 @@
 
         const touch = e.touches[0];
         const cropBox = document.getElementById('cropBox');
+        if (!cropBox) return;
+
         const deltaX = touch.clientX - cropState.dragStart.x;
         const deltaY = touch.clientY - cropState.dragStart.y;
 
         if (cropState.isDragging) {
           moveCropBox(cropBox, deltaX, deltaY);
+        } else if (cropState.isResizing) {
+          resizeCropBox(cropBox, deltaX, deltaY, cropState.resizeHandle);
         }
 
         cropState.dragStart = { x: touch.clientX, y: touch.clientY };
