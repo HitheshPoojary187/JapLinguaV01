@@ -194,10 +194,7 @@
     }
 
     /* Camera interface styles */
-    #cameraVideo {
-      transform: scaleX(-1);
-      /* Mirror effect for front camera */
-    }
+    /* Mirror effect removed - camera will show normal orientation */
 
     /* Progress step styles */
     .step-active {
@@ -795,11 +792,19 @@
                   <path
                     d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 </svg>
-                <span><span class="font-semibold">Troubleshooting:</span> If pronunciation doesn't work, check browser
-                  settings or use "Test Voices" to see available options.</span>
+                <span><span class="font-semibold">Voice Selection:</span> Choose your preferred Japanese voice from the
+                  dropdown above, then use "Test Voices" to hear a sample.</span>
               </div>
             </div>
             <div class="space-y-4">
+              <div>
+                <label for="voiceSelect" class="block text-sm font-medium text-gray-600 mb-2">Select Japanese
+                  Voice</label>
+                <select id="voiceSelect"
+                  class="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors mb-4">
+                  <option value="">Loading voices...</option>
+                </select>
+              </div>
               <div>
                 <label for="romanjiInput" class="block text-sm font-medium text-gray-600 mb-2">Romanji Text</label>
                 <input type="text" id="romanjiInput"
@@ -1815,6 +1820,7 @@
       var elJapaneseOutput = document.getElementById('japaneseOutput');
       var elJapaneseText = document.getElementById('japaneseText');
       var elPronunciationStatus = document.getElementById('pronunciationStatus');
+      var elVoiceSelect = document.getElementById('voiceSelect');
 
       async function speakJapanese() {
         try {
@@ -1852,21 +1858,38 @@
           const voices = speechSynthesis.getVoices();
           console.log('Available voices:', voices.length);
 
-          // Find Japanese voice
-          const japaneseVoice = voices.find(voice =>
-            voice.lang.startsWith('ja') ||
-            voice.name.toLowerCase().includes('japanese') ||
-            voice.name.toLowerCase().includes('japan')
-          );
+          // Get selected voice from dropdown
+          let selectedVoice = null;
+          if (elVoiceSelect && elVoiceSelect.value !== '') {
+            const japaneseVoices = voices.filter(voice =>
+              voice.lang.startsWith('ja') ||
+              voice.name.toLowerCase().includes('japanese') ||
+              voice.name.toLowerCase().includes('japan')
+            );
 
-          console.log('Japanese voice found:', japaneseVoice ? japaneseVoice.name : 'None');
+            const selectedIndex = parseInt(elVoiceSelect.value);
+            if (selectedIndex >= 0 && selectedIndex < japaneseVoices.length) {
+              selectedVoice = japaneseVoices[selectedIndex];
+            }
+          }
+
+          // Fallback: Find any Japanese voice if none selected
+          if (!selectedVoice) {
+            selectedVoice = voices.find(voice =>
+              voice.lang.startsWith('ja') ||
+              voice.name.toLowerCase().includes('japanese') ||
+              voice.name.toLowerCase().includes('japan')
+            );
+          }
+
+          console.log('Selected voice:', selectedVoice ? selectedVoice.name : 'None');
 
           // Create utterance
           var utterance = new SpeechSynthesisUtterance(japaneseWord);
 
           // Set voice and language
-          if (japaneseVoice) {
-            utterance.voice = japaneseVoice;
+          if (selectedVoice) {
+            utterance.voice = selectedVoice;
           }
           utterance.lang = 'ja-JP';
           utterance.rate = 0.7; // Slower for learning
@@ -1918,14 +1941,70 @@
           };
 
           speechSynthesis.addEventListener('voiceschanged', voicesChangedHandler);
-
-          // Fallback timeout
-          setTimeout(resolve, 1000);
         });
+      }
+
+      // Function to populate voice selector with Japanese voices
+      async function populateVoiceSelector() {
+        if (!elVoiceSelect) return;
+
+        try {
+          await waitForVoices();
+          const voices = speechSynthesis.getVoices();
+
+          // Filter for Japanese voices
+          const japaneseVoices = voices.filter(voice =>
+            voice.lang.startsWith('ja') ||
+            voice.name.toLowerCase().includes('japanese') ||
+            voice.name.toLowerCase().includes('japan')
+          );
+
+          // Clear existing options
+          elVoiceSelect.innerHTML = '';
+
+          if (japaneseVoices.length > 0) {
+            // Add Japanese voices
+            japaneseVoices.forEach((voice, index) => {
+              const option = document.createElement('option');
+              option.value = index;
+              option.textContent = `${voice.name} (${voice.lang})${voice.default ? ' [Default]' : ''}`;
+              option.dataset.voiceName = voice.name;
+              option.dataset.voiceLang = voice.lang;
+              elVoiceSelect.appendChild(option);
+            });
+
+            // Select the first Japanese voice by default
+            elVoiceSelect.selectedIndex = 0;
+
+            if (elPronunciationStatus) {
+              elPronunciationStatus.textContent = `${japaneseVoices.length} Japanese voice(s) available`;
+            }
+          } else {
+            // No Japanese voices found, show all voices as fallback
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'No Japanese voices found - using system default';
+            elVoiceSelect.appendChild(option);
+
+            if (elPronunciationStatus) {
+              elPronunciationStatus.textContent = 'No Japanese voices available';
+            }
+          }
+        } catch (error) {
+          console.error('Error populating voice selector:', error);
+          elVoiceSelect.innerHTML = '<option value="">Error loading voices</option>';
+        }
       }
 
       if (elSpeakBtn) elSpeakBtn.addEventListener('click', speakJapanese);
       if (elRomanjiInput) elRomanjiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') speakJapanese(); });
+
+      // Initialize voice selector when page loads
+      if (elVoiceSelect) {
+        populateVoiceSelector();
+        // Also repopulate when voices change (some browsers load voices asynchronously)
+        speechSynthesis.addEventListener('voiceschanged', populateVoiceSelector);
+      }
 
       // Test voices functionality
       const testVoicesBtn = document.getElementById('testVoicesBtn');
@@ -1940,8 +2019,6 @@
             await waitForVoices();
             const voices = speechSynthesis.getVoices();
 
-            let voiceInfo = `Available voices (${voices.length} total):\n\n`;
-
             const japaneseVoices = voices.filter(voice =>
               voice.lang.startsWith('ja') ||
               voice.name.toLowerCase().includes('japanese') ||
@@ -1949,24 +2026,25 @@
             );
 
             if (japaneseVoices.length > 0) {
-              voiceInfo += 'Japanese voices:\n';
-              japaneseVoices.forEach(voice => {
-                voiceInfo += `- ${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}\n`;
-              });
-            } else {
-              voiceInfo += 'No Japanese voices found.\n';
-              voiceInfo += '\nAll available voices:\n';
-              voices.slice(0, 10).forEach(voice => {
-                voiceInfo += `- ${voice.name} (${voice.lang})\n`;
-              });
-              if (voices.length > 10) {
-                voiceInfo += `... and ${voices.length - 10} more\n`;
+              // Test the currently selected voice
+              const selectedIndex = elVoiceSelect ? parseInt(elVoiceSelect.value) : 0;
+              const testVoice = japaneseVoices[selectedIndex] || japaneseVoices[0];
+
+              const testText = 'こんにちは'; // "Hello" in Japanese
+              const utterance = new SpeechSynthesisUtterance(testText);
+              utterance.voice = testVoice;
+              utterance.lang = 'ja-JP';
+              utterance.rate = 0.7;
+
+              speechSynthesis.cancel(); // Stop any ongoing speech
+              speechSynthesis.speak(utterance);
+
+              if (elPronunciationStatus) {
+                elPronunciationStatus.textContent = `Testing voice: ${testVoice.name}`;
               }
+            } else {
+              alert('No Japanese voices available on this system.\n\nTo get Japanese voices:\n- Windows: Go to Settings > Time & Language > Speech\n- Mac: Go to System Preferences > Accessibility > Speech\n- Chrome: May use online voices if available');
             }
-
-            voiceInfo += '\nNote: If no Japanese voices are available, the system will use the default voice which may not pronounce Japanese correctly.';
-
-            alert(voiceInfo);
           } catch (error) {
             alert('Error testing voices: ' + error.message);
           }
@@ -3746,7 +3824,7 @@
       document.addEventListener('DOMContentLoaded', function () {
         // Initialize KanjiOCR workflow functionality
         initializeWorkflowEventListeners();
-        
+
         // Test Tesseract availability
         setTimeout(() => {
           if (typeof Tesseract !== 'undefined') {
